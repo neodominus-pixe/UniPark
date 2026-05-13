@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard — UniPark AUST</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+  <style>
+    .admin-page {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2.5rem 1.5rem 4rem;
+    }
+
+    /* ── Topbar ── */
+    .admin-topbar {
+      width: 100%;
+      max-width: 960px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 2.5rem;
+      padding-bottom: 1.25rem;
+      border-bottom: 1px solid var(--border);
+      animation: fadeUp 0.5s ease both;
+    }
+    .admin-topbar-left { display: flex; flex-direction: column; gap: 0.15rem; }
+    .admin-topbar-left .logo { font-size: 1.5rem; }
+    .admin-topbar-left .admin-label {
+      font-family: 'Raleway', sans-serif;
+      font-size: 0.58rem;
+      color: var(--muted);
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+
+    /* ── Stats ── */
+    .admin-stats {
+      display: flex;
+      width: 100%;
+      max-width: 960px;
+      margin-bottom: 2rem;
+      border: 1px solid var(--border);
+      animation: fadeUp 0.5s 0.07s ease both;
+      opacity: 0;
+    }
+    .admin-stats .stat-card {
+      border-left: none;
+      border-top: none;
+      border-bottom: none;
+    }
+
+    /* ── Controls ── */
+    .admin-controls {
+      display: flex;
+      width: 100%;
+      max-width: 960px;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      border: 1px solid var(--border);
+      gap: 0;
+      background: var(--border);
+      animation: fadeUp 0.5s 0.12s ease both;
+      opacity: 0;
+    }
+    .admin-controls input,
+    .admin-controls select {
+      flex: 1;
+      min-width: 160px;
+      padding: 0.75rem 1.25rem;
+      border: none;
+      background: var(--surface);
+      color: var(--ivory);
+      font-family: 'Raleway', sans-serif;
+      font-size: 0.85rem;
+      transition: background 0.2s;
+    }
+    .admin-controls input::placeholder { color: var(--muted); }
+    .admin-controls input:focus,
+    .admin-controls select:focus { outline: none; background: var(--surface-2); }
+    .admin-controls select option { background: var(--surface); color: var(--ivory); }
+
+    /* ── Table container ── */
+    .table-container {
+      width: 100%;
+      max-width: 960px;
+      animation: fadeUp 0.5s 0.18s ease both;
+      opacity: 0;
+    }
+    .table-wrap {
+      border: 1px solid var(--border);
+      overflow: hidden;
+      overflow-x: auto;
+    }
+
+    /* Override base table for dark theme */
+    thead th {
+      background: var(--bg);
+      color: var(--gold);
+    }
+    tbody { background: var(--surface); }
+    tbody td { border-bottom: 1px solid var(--border); }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr:hover { background: var(--surface-2); }
+
+    .phone-link {
+      color: var(--gold-light);
+      text-decoration: none;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      transition: color 0.2s;
+    }
+    .phone-link:hover { color: var(--gold); text-decoration: underline; }
+
+    .plate-cell {
+      font-family: 'IBM Plex Mono', monospace;
+      font-weight: 600;
+      font-size: 0.9rem;
+      letter-spacing: 0.08em;
+      color: var(--ivory);
+    }
+
+    .time-cell {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .empty-row td {
+      text-align: center;
+      padding: 4rem 1rem;
+      color: var(--muted);
+      font-family: 'Raleway', sans-serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    @media (max-width: 600px) {
+      .admin-stats { flex-direction: column; }
+      .admin-controls { flex-direction: column; }
+      .admin-topbar { flex-direction: column; align-items: flex-start; gap: 1rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-page">
+
+    <!-- Topbar -->
+    <div class="admin-topbar">
+      <div class="admin-topbar-left">
+        <a href="../index.html" class="logo">Uni<span>Park</span></a>
+        <span class="admin-label">Security Dashboard</span>
+      </div>
+      <button class="btn btn-ghost btn-sm" id="logout-btn">Sign Out</button>
+    </div>
+
+    <!-- Stats -->
+    <div class="admin-stats">
+      <div class="stat-card">
+        <div class="stat-label">Active Cars</div>
+        <div class="stat-value accent" id="stat-active">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Exited Today</div>
+        <div class="stat-value green" id="stat-exited">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Total Capacity</div>
+        <div class="stat-value" id="stat-total" style="color:var(--muted);">—</div>
+      </div>
+    </div>
+
+    <!-- Search + Filter -->
+    <div class="admin-controls">
+      <input
+        type="text"
+        id="search-input"
+        placeholder="Search by name, plate or student ID…"
+      />
+      <select id="zone-filter">
+        <option value="">All Zones</option>
+      </select>
+    </div>
+
+    <!-- Table -->
+    <div class="table-container">
+      <div id="loading" class="loading">Loading parking data…</div>
+
+      <div class="table-wrap" id="table-wrap" style="display:none;">
+        <table>
+          <thead>
+            <tr>
+              <th>Student Name</th>
+              <th>Student ID</th>
+              <th>Phone</th>
+              <th>Plate</th>
+              <th>Zone</th>
+              <th>Spot</th>
+              <th>Arrived</th>
+              <th>Est. Departure</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="cars-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../assets/js/config.js"></script>
+  <script src="../assets/js/supabase.js"></script>
+  <script src="../assets/js/admin-dashboard.js"></script>
+</body>
+</html>

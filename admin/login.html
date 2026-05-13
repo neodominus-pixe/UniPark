@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Security Login — UniPark AUST</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+  <style>
+    .login-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 2rem 1.5rem;
+      background:
+        radial-gradient(ellipse 50% 60% at 50% 40%, rgba(201,168,76,0.05) 0%, transparent 70%),
+        var(--bg);
+    }
+
+    .login-brand {
+      margin-bottom: 2.5rem;
+      text-align: center;
+      animation: fadeUp 0.5s ease both;
+    }
+    .login-brand .logo { font-size: 1.75rem; }
+    .login-brand .brand-sub {
+      font-family: 'Raleway', sans-serif;
+      font-size: 0.6rem;
+      font-weight: 700;
+      color: var(--muted);
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      margin-top: 0.4rem;
+    }
+
+    .login-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 2.5rem;
+      width: 100%;
+      max-width: 420px;
+      position: relative;
+      animation: fadeUp 0.55s 0.1s ease both;
+      opacity: 0;
+    }
+    .login-card::before, .login-card::after {
+      content: '';
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      border-color: var(--gold);
+      border-style: solid;
+    }
+    .login-card::before { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
+    .login-card::after  { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
+
+    .login-card h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.85rem;
+      font-weight: 500;
+      color: var(--ivory);
+      margin-bottom: 0.35rem;
+      letter-spacing: 0.02em;
+    }
+    .login-card .subtitle {
+      font-family: 'Raleway', sans-serif;
+      color: var(--muted);
+      font-size: 0.68rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-weight: 500;
+      margin-bottom: 2rem;
+    }
+
+    .back-link {
+      display: block;
+      text-align: center;
+      margin-top: 1.75rem;
+      color: var(--muted);
+      font-family: 'Raleway', sans-serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      font-weight: 600;
+      transition: color 0.25s;
+      animation: fadeUp 0.5s 0.25s ease both;
+      opacity: 0;
+    }
+    .back-link:hover { color: var(--gold); }
+  </style>
+</head>
+<body>
+  <div class="login-wrap">
+
+    <div class="login-brand">
+      <a href="../index.html" class="logo">Uni<span>Park</span></a>
+      <p class="brand-sub">Security Access Portal</p>
+    </div>
+
+    <div class="login-card">
+      <h2>Security Login</h2>
+      <p class="subtitle">Authorized personnel only</p>
+
+      <div id="form-message" class="form-message" role="alert"></div>
+
+      <form id="login-form" novalidate>
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input
+            type="email"
+            id="email"
+            placeholder="admin@aust.edu"
+            autocomplete="email"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input
+            type="password"
+            id="password"
+            placeholder="••••••••"
+            autocomplete="current-password"
+            required
+          />
+        </div>
+
+        <button type="submit" class="btn" id="login-btn">Sign In</button>
+      </form>
+    </div>
+
+    <a href="../index.html" class="back-link">← Back to UniPark</a>
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../assets/js/config.js"></script>
+  <script src="../assets/js/supabase.js"></script>
+  <script src="../assets/js/admin-login.js"></script>
+</body>
+</html>

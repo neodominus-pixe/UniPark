@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Register My Car — UniPark AUST</title>
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+  <div class="page">
+
+    <nav class="topbar">
+      <a href="index.html" class="logo">Uni<span>Park</span></a>
+      <div class="topbar-links">
+        <a href="dashboard.html">View Parking</a>
+        <a href="find-blocker.html">Find Blocker</a>
+      </div>
+    </nav>
+
+    <div class="card">
+      <div class="card-header">
+        <h2>Register My Car</h2>
+        <p>Fill in your details to park at AUST campus</p>
+      </div>
+
+      <div id="form-message" class="form-message" role="alert"></div>
+
+      <form id="register-form" novalidate>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="student_name">Full Name</label>
+            <input type="text" id="student_name" placeholder="e.g. Ali Hassan" required />
+          </div>
+          <div class="form-group">
+            <label for="student_id">Student ID</label>
+            <input type="text" id="student_id" placeholder="e.g. 2023123456" required />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="phone_number">Phone Number</label>
+            <input type="tel" id="phone_number" placeholder="e.g. 0791234567" required />
+          </div>
+          <div class="form-group">
+            <label for="plate_number">Plate Number</label>
+            <input type="text" id="plate_number" placeholder="e.g. ABC 1234" required autocomplete="off" />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="zone">Parking Zone</label>
+            <select id="zone" required>
+              <option value="">Loading zones...</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="spot_number">Spot Number</label>
+            <input type="number" id="spot_number" min="1" max="10" placeholder="1 – 10" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="departure_time">Estimated Departure</label>
+          <input type="datetime-local" id="departure_time" required />
+        </div>
+
+        <button type="submit" class="btn" id="submit-btn">Register My Car</button>
+        <p class="clear-info-wrap"><a href="#" id="clear-info-link" onclick="clearSavedInfo(); return false;">Clear saved info</a></p>
+
+      </form>
+    </div>
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/supabase.js"></script>
+  <script src="assets/js/register.js"></script>
+</body>
+</html>

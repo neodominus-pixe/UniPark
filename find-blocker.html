@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Find My Blocker — UniPark AUST</title>
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+  <div class="page">
+
+    <nav class="topbar">
+      <a href="index.html" class="logo">Uni<span>Park</span></a>
+      <div class="topbar-links">
+        <a href="register.html">Park My Car</a>
+        <a href="dashboard.html">View Parking</a>
+      </div>
+    </nav>
+
+    <div class="card">
+      <div class="card-header">
+        <h2>Find My Blocker</h2>
+        <p>Enter your plate number to see who is blocking you</p>
+      </div>
+
+      <div id="form-message" class="form-message" role="alert"></div>
+
+      <form id="lookup-form" novalidate>
+        <div class="form-group">
+          <label for="plate_input">Your Plate Number</label>
+          <input
+            type="text"
+            id="plate_input"
+            placeholder="e.g. ABC 1234"
+            autocomplete="off"
+            required
+          />
+        </div>
+        <button type="submit" class="btn" id="lookup-btn">Check Now</button>
+      </form>
+    </div>
+
+    <!-- Result area — rendered by JS -->
+    <div id="result-area"></div>
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/supabase.js"></script>
+  <script src="assets/js/find-blocker.js"></script>
+</body>
+</html>
