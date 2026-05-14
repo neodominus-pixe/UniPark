@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Admin Dashboard — UniPark AUST</title>
+  <link rel="stylesheet" media="screen" href="https://fontlibrary.org//face/jellee-typeface" type="text/css"/>
   <link rel="stylesheet" href="../assets/css/style.css" />
   <style>
     .admin-page {
@@ -81,7 +82,7 @@
     .admin-controls input::placeholder { color: var(--muted); }
     .admin-controls input:focus,
     .admin-controls select:focus { outline: none; background: var(--surface-2); }
-    .admin-controls select option { background: var(--surface); color: var(--ivory); }
+    .admin-controls select option { background: var(--surface); color: var(--text-on-light); }
 
     /* ── Table container ── */
     .table-container {
@@ -107,28 +108,28 @@
     tbody tr:hover { background: var(--surface-2); }
 
     .phone-link {
-      color: var(--gold-light);
+      color: var(--plum);
       text-decoration: none;
-      font-family: 'IBM Plex Mono', monospace;
+      font-family: 'JelleeRegular', sans-serif;
       font-size: 0.8rem;
-      font-weight: 500;
+      font-weight: 400;
       letter-spacing: 0.04em;
       transition: color 0.2s;
     }
-    .phone-link:hover { color: var(--gold); text-decoration: underline; }
+    .phone-link:hover { color: var(--text-on-light); text-decoration: underline; }
 
     .plate-cell {
       font-family: 'IBM Plex Mono', monospace;
       font-weight: 600;
       font-size: 0.9rem;
       letter-spacing: 0.08em;
-      color: var(--ivory);
+      color: var(--text-on-light);
     }
 
     .time-cell {
-      font-family: 'IBM Plex Mono', monospace;
+      font-family: 'JelleeRegular', sans-serif;
       font-size: 0.72rem;
-      color: var(--muted);
+      color: var(--plum);
       white-space: nowrap;
     }
 

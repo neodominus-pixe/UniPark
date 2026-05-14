@@ -1,37 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>UniPark — AUST Campus Parking</title>
+  <link rel="stylesheet" media="screen" href="https://fontlibrary.org//face/jellee-typeface" type="text/css" />
   <link rel="stylesheet" href="assets/css/style.css" />
   <style>
     /* ── Landing nav ── */
     .landing-nav {
       position: fixed;
-      top: 0; left: 0; right: 0;
+      top: 0;
+      left: 0;
+      right: 0;
       z-index: 100;
       display: flex;
       align-items: center;
       justify-content: space-between;
       padding: 1.1rem 2.5rem;
-      background: rgba(12, 26, 46, 0.88);
+      background: rgba(255, 255, 255, 0.97);
       backdrop-filter: blur(14px);
       -webkit-backdrop-filter: blur(14px);
       border-bottom: 1px solid var(--border);
       transition: border-color 0.3s;
     }
 
-    .landing-nav .nav-links { display: flex; gap: 2rem; align-items: center; }
-    .landing-nav .nav-links a {
-      color: var(--muted);
+    .landing-nav .nav-links {
+      display: flex;
+      gap: 2rem;
+      align-items: center;
+    }
+
+    .landing-nav .nav-links a:not(.btn) {
+      color: var(--plum);
       font-size: 0.67rem;
-      font-weight: 600;
+      font-weight: 400;
       letter-spacing: 0.16em;
       text-transform: uppercase;
       transition: color 0.25s;
     }
-    .landing-nav .nav-links a:not(.btn):hover { color: var(--gold); }
+
+    .landing-nav .nav-links a:not(.btn):hover {
+      color: var(--text-on-dark);
+    }
 
     .landing-nav .btn {
       width: auto;
@@ -64,29 +76,55 @@
       pointer-events: none;
       z-index: 0;
     }
+
     .hero-bg-grid span {
-      font-family: 'Cormorant Garamond', serif;
-      font-weight: 700;
+      font-family: 'JelleeRegular', sans-serif;
+      font-weight: 400;
       font-size: clamp(12rem, 22vw, 20rem);
-      color: var(--gold);
+      color: var(--plum);
       display: flex;
       align-items: center;
       justify-content: center;
       line-height: 1;
-      opacity: 0.028;
+      opacity: 0.06;
       user-select: none;
       animation: heroLetterIn 1.2s ease both;
     }
-    .hero-bg-grid span:nth-child(1) { animation-delay: 0.05s; }
-    .hero-bg-grid span:nth-child(2) { animation-delay: 0.1s; }
-    .hero-bg-grid span:nth-child(3) { animation-delay: 0.15s; }
-    .hero-bg-grid span:nth-child(4) { animation-delay: 0.2s; }
-    .hero-bg-grid span:nth-child(5) { animation-delay: 0.25s; }
-    .hero-bg-grid span:nth-child(6) { animation-delay: 0.3s; }
+
+    .hero-bg-grid span:nth-child(1) {
+      animation-delay: 0.05s;
+    }
+
+    .hero-bg-grid span:nth-child(2) {
+      animation-delay: 0.1s;
+    }
+
+    .hero-bg-grid span:nth-child(3) {
+      animation-delay: 0.15s;
+    }
+
+    .hero-bg-grid span:nth-child(4) {
+      animation-delay: 0.2s;
+    }
+
+    .hero-bg-grid span:nth-child(5) {
+      animation-delay: 0.25s;
+    }
+
+    .hero-bg-grid span:nth-child(6) {
+      animation-delay: 0.3s;
+    }
 
     @keyframes heroLetterIn {
-      from { opacity: 0; transform: scale(0.92); }
-      to   { opacity: 0.028; transform: scale(1); }
+      from {
+        opacity: 0;
+        transform: scale(0.92);
+      }
+
+      to {
+        opacity: 0.06;
+        transform: scale(1);
+      }
     }
 
     /* Radial glow at center */
@@ -94,7 +132,7 @@
       content: '';
       position: absolute;
       inset: 0;
-      background: radial-gradient(ellipse 60% 50% at 50% 50%, rgba(201,168,76,0.06) 0%, transparent 70%);
+      background: radial-gradient(ellipse 60% 50% at 50% 50%, rgba(36, 58, 94, 0.06) 0%, transparent 70%);
       pointer-events: none;
       z-index: 0;
     }
@@ -116,38 +154,43 @@
       animation: fadeUp 0.6s 0.2s ease both;
       opacity: 0;
     }
+
     .hero-eyebrow-rule {
       width: 3rem;
       height: 1px;
       background: var(--gold-dim);
     }
+
     .hero-eyebrow-text {
-      font-family: 'Raleway', sans-serif;
+      font-family: 'JelleeRegular', sans-serif;
       font-size: 0.62rem;
-      font-weight: 700;
+      font-weight: 400;
       letter-spacing: 0.26em;
       text-transform: uppercase;
-      color: var(--gold);
+      color: var(--plum);
     }
 
     /* Giant wordmark */
     .hero-wordmark {
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'JelleeRegular', sans-serif;
       font-size: clamp(5rem, 16vw, 11rem);
-      font-weight: 300;
+      font-weight: 400;
       line-height: 1;
       letter-spacing: 0.08em;
-      color: var(--ivory);
+      color: var(--text-on-dark);
       text-transform: uppercase;
       animation: fadeUp 0.7s 0.3s ease both;
       opacity: 0;
     }
-    .hero-wordmark .wm-accent { color: var(--gold); font-weight: 700; }
+
+    .hero-wordmark .wm-accent {
+      color: var(--plum);
+    }
 
     /* Diamond ornament */
     .hero-ornament {
       font-size: 0.75rem;
-      color: var(--gold);
+      color: var(--plum);
       margin: 1.5rem 0;
       letter-spacing: 0.5rem;
       animation: fadeUp 0.6s 0.5s ease both;
@@ -156,11 +199,11 @@
 
     /* Tagline */
     .hero-sub {
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'JelleeRegular', sans-serif;
       font-size: clamp(1.1rem, 3vw, 1.5rem);
-      font-weight: 300;
+      font-weight: 400;
       font-style: italic;
-      color: var(--ivory-2);
+      color: var(--plum);
       line-height: 1.55;
       max-width: 480px;
       margin-bottom: 2.75rem;
@@ -176,17 +219,39 @@
       animation: fadeUp 0.6s 0.75s ease both;
       opacity: 0;
     }
+
     .hero-actions .btn {
       flex: 1;
       min-width: 160px;
       margin-top: 0;
-      border: none;
-      background: var(--surface);
+      background: transparent;
+      color: var(--text-on-dark);
+      border: 1px solid var(--border-strong);
     }
-    .hero-actions .btn::before { background: var(--gold); }
-    .hero-actions .btn-ghost { background: var(--bg); }
-    .hero-actions .btn-ghost::before { background: var(--surface); }
-    .hero-actions .btn-ghost:hover { color: var(--ivory); }
+
+    .hero-actions .btn::before {
+      background: var(--text-on-dark);
+    }
+
+    .hero-actions .btn:hover {
+      color: var(--bg);
+      border-color: var(--text-on-dark);
+    }
+
+    .hero-actions .btn-ghost {
+      background: transparent;
+      color: var(--plum);
+      border: 1px solid var(--border);
+    }
+
+    .hero-actions .btn-ghost::before {
+      background: var(--surface-2);
+    }
+
+    .hero-actions .btn-ghost:hover {
+      color: var(--text-on-dark);
+      border-color: var(--border-strong);
+    }
 
     /* Scroll indicator */
     .scroll-hint {
@@ -201,11 +266,13 @@
       animation: fadeUp 0.6s 1s ease both, scrollBounce 2s 1.5s ease-in-out infinite;
       opacity: 0;
     }
+
     .scroll-hint-line {
       width: 1px;
       height: 2.5rem;
       background: linear-gradient(to bottom, var(--gold-dim), transparent);
     }
+
     .scroll-hint-dot {
       width: 4px;
       height: 4px;
@@ -214,8 +281,15 @@
     }
 
     @keyframes scrollBounce {
-      0%, 100% { transform: translateX(-50%) translateY(0); }
-      50%       { transform: translateX(-50%) translateY(6px); }
+
+      0%,
+      100% {
+        transform: translateX(-50%) translateY(0);
+      }
+
+      50% {
+        transform: translateX(-50%) translateY(6px);
+      }
     }
 
     /* ── Sections shared ── */
@@ -236,12 +310,15 @@
       width: 100%;
       max-width: 200px;
     }
-    .section-rule::before, .section-rule::after {
+
+    .section-rule::before,
+    .section-rule::after {
       content: '';
       flex: 1;
       height: 1px;
       background: var(--border);
     }
+
     .section-rule-diamond {
       width: 5px;
       height: 5px;
@@ -251,35 +328,60 @@
     }
 
     .section-label {
-      font-family: 'Raleway', sans-serif;
+      font-family: 'JelleeRegular', sans-serif;
       font-size: 0.62rem;
-      font-weight: 700;
+      font-weight: 400;
       letter-spacing: 0.24em;
       text-transform: uppercase;
-      color: var(--gold);
+      color: var(--plum);
       margin-bottom: 0.75rem;
     }
 
     .section h2 {
       font-size: clamp(2rem, 5vw, 3rem);
       font-weight: 400;
-      color: var(--ivory);
+      color: var(--text-on-dark);
       margin-bottom: 0.875rem;
       max-width: 560px;
       letter-spacing: 0.01em;
     }
 
-    .section > p {
-      color: var(--muted);
+    .section>p {
+      color: var(--plum);
       font-size: 0.9rem;
       max-width: 460px;
       line-height: 1.7;
       margin-bottom: 3.5rem;
-      font-family: 'Raleway', sans-serif;
+      font-family: 'JelleeRegular', sans-serif;
     }
 
-    /* ── Problem section ── */
-    .problem-section { background: #091525; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    /* ── Problem section — Midnight Blue accent block ── */
+    .problem-section {
+      background: #243A5E;
+      border-top: 1px solid rgba(237, 244, 250, 0.15);
+      border-bottom: 1px solid rgba(237, 244, 250, 0.15);
+    }
+
+    .problem-section .section-rule::before,
+    .problem-section .section-rule::after {
+      background: rgba(237, 244, 250, 0.25);
+    }
+
+    .problem-section .section-rule-diamond {
+      background: #EDF4FA;
+    }
+
+    .problem-section .section-label {
+      color: #EDF4FA;
+    }
+
+    .problem-section h2 {
+      color: #EDF4FA;
+    }
+
+    .problem-section > p {
+      color: #8FB6D8;
+    }
 
     .problem-grid {
       display: grid;
@@ -287,8 +389,8 @@
       gap: 1px;
       width: 100%;
       max-width: 860px;
-      background: var(--border);
-      border: 1px solid var(--border);
+      background: rgba(254, 239, 220, 0.15);
+      border: 1px solid rgba(254, 239, 220, 0.15);
     }
 
     .problem-card {
@@ -297,35 +399,40 @@
       text-align: left;
       transition: background 0.25s;
     }
-    .problem-card:hover { background: var(--surface-2); }
+
+    .problem-card:hover {
+      background: var(--surface-2);
+    }
 
     .problem-card .p-num {
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'JelleeRegular', sans-serif;
       font-size: 3.5rem;
-      font-weight: 300;
-      color: var(--gold);
-      opacity: 0.3;
+      font-weight: 400;
+      color: var(--plum);
+      opacity: 0.35;
       line-height: 1;
       margin-bottom: 1rem;
     }
 
     .problem-card h3 {
       font-size: 1.05rem;
-      font-weight: 600;
-      color: var(--ivory);
+      font-weight: 400;
+      color: var(--text-on-light);
       margin-bottom: 0.6rem;
       letter-spacing: 0.02em;
     }
 
     .problem-card p {
       font-size: 0.82rem;
-      color: var(--muted);
+      color: var(--plum);
       line-height: 1.65;
-      font-family: 'Raleway', sans-serif;
+      font-family: 'JelleeRegular', sans-serif;
     }
 
     /* ── Solution section ── */
-    .solution-section { background: var(--bg); }
+    .solution-section {
+      background: var(--bg);
+    }
 
     .feature-grid {
       display: grid;
@@ -344,9 +451,13 @@
       position: relative;
       transition: background 0.25s;
     }
-    .feature-card:hover { background: var(--surface-2); }
 
-    .feature-card::before, .feature-card::after {
+    .feature-card:hover {
+      background: var(--surface-2);
+    }
+
+    .feature-card::before,
+    .feature-card::after {
       content: '';
       position: absolute;
       width: 10px;
@@ -355,16 +466,29 @@
       border-style: solid;
       transition: border-color 0.3s;
     }
-    .feature-card::before { top: 0; left: 0; border-width: 1.5px 0 0 1.5px; }
-    .feature-card::after  { bottom: 0; right: 0; border-width: 0 1.5px 1.5px 0; }
+
+    .feature-card::before {
+      top: 0;
+      left: 0;
+      border-width: 1.5px 0 0 1.5px;
+    }
+
+    .feature-card::after {
+      bottom: 0;
+      right: 0;
+      border-width: 0 1.5px 1.5px 0;
+    }
+
     .feature-card:hover::before,
-    .feature-card:hover::after { border-color: var(--gold); }
+    .feature-card:hover::after {
+      border-color: var(--plum);
+    }
 
     .feature-card .step-num {
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'JelleeRegular', sans-serif;
       font-size: 3.5rem;
-      font-weight: 300;
-      color: var(--gold);
+      font-weight: 400;
+      color: var(--plum);
       opacity: 0.25;
       line-height: 1;
       margin-bottom: 1.25rem;
@@ -372,17 +496,17 @@
 
     .feature-card h3 {
       font-size: 1.1rem;
-      font-weight: 600;
-      color: var(--ivory);
+      font-weight: 400;
+      color: var(--text-on-light);
       margin-bottom: 0.6rem;
       letter-spacing: 0.01em;
     }
 
     .feature-card p {
       font-size: 0.82rem;
-      color: var(--muted);
+      color: var(--plum);
       line-height: 1.65;
-      font-family: 'Raleway', sans-serif;
+      font-family: 'JelleeRegular', sans-serif;
     }
 
     /* ── CTA section ── */
@@ -392,24 +516,46 @@
       border-bottom: 1px solid var(--border);
     }
 
-    .cta-section h2 { color: var(--ivory); }
+    .cta-section h2 {
+      color: var(--text-on-dark);
+    }
 
     .cta-actions {
       display: flex;
       gap: 1px;
       background: var(--border);
     }
+
     .cta-actions .btn {
       flex: 1;
       min-width: 160px;
       margin-top: 0;
       border: none;
-      background: var(--bg);
+      background: var(--text-on-dark);
+      color: var(--bg);
     }
-    .cta-actions .btn::before { background: var(--gold); }
-    .cta-actions .btn-ghost { background: #0D0B09; }
-    .cta-actions .btn-ghost::before { background: var(--surface-2); }
-    .cta-actions .btn-ghost:hover { color: var(--ivory); }
+
+    .cta-actions .btn::before {
+      background: var(--plum);
+    }
+
+    .cta-actions .btn:hover {
+      color: #FFFFFF;
+    }
+
+    .cta-actions .btn-ghost {
+      background: transparent;
+      color: var(--text-on-dark);
+      border: 1px solid var(--border-strong);
+    }
+
+    .cta-actions .btn-ghost::before {
+      background: var(--text-on-dark);
+    }
+
+    .cta-actions .btn-ghost:hover {
+      color: var(--bg);
+    }
 
     /* ── Footer ── */
     footer {
@@ -418,33 +564,42 @@
       background: var(--bg);
       border-top: 1px solid var(--border);
     }
+
     .footer-logo {
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'JelleeRegular', sans-serif;
       font-size: 1.25rem;
-      font-weight: 700;
+      font-weight: 400;
       letter-spacing: 0.14em;
       text-transform: uppercase;
-      color: var(--ivory);
+      color: var(--text-on-dark);
       margin-bottom: 0.35rem;
     }
-    .footer-logo span { color: var(--gold); }
+
+    .footer-logo span {
+      color: var(--plum);
+    }
+
     footer p {
-      color: var(--muted);
+      color: var(--plum);
       font-size: 0.67rem;
-      font-family: 'Raleway', sans-serif;
+      font-family: 'JelleeRegular', sans-serif;
       letter-spacing: 0.1em;
       text-transform: uppercase;
       margin-bottom: 1rem;
     }
+
     .footer-link {
-      color: var(--muted);
+      color: var(--plum);
       font-size: 0.67rem;
-      font-family: 'Raleway', sans-serif;
+      font-family: 'JelleeRegular', sans-serif;
       letter-spacing: 0.14em;
       text-transform: uppercase;
       transition: color 0.25s;
     }
-    .footer-link:hover { color: var(--gold); }
+
+    .footer-link:hover {
+      color: var(--text-on-dark);
+    }
 
     /* ── Divider ── */
     .divider {
@@ -455,12 +610,24 @@
 
     /* ── Mobile ── */
     @media (max-width: 500px) {
-      .hero-actions, .cta-actions { flex-direction: column; gap: 0; }
-      .landing-nav { padding: 1rem 1.25rem; }
-      .landing-nav .nav-links { display: none; }
+
+      .hero-actions,
+      .cta-actions {
+        flex-direction: column;
+        gap: 0;
+      }
+
+      .landing-nav {
+        padding: 1rem 1.25rem;
+      }
+
+      .landing-nav .nav-links {
+        display: none;
+      }
     }
   </style>
 </head>
+
 <body>
 
   <!-- Fixed Nav -->
@@ -554,23 +721,27 @@
     </div>
     <div class="section-label">The Solution</div>
     <h2>Self-service parking in three steps</h2>
-    <p>UniPark gives every student a role in keeping the lot running smoothly — no hardware, no app install, just a browser.</p>
+    <p>UniPark gives every student a role in keeping the lot running smoothly — no hardware, no app install, just a
+      browser.</p>
 
     <div class="feature-grid">
       <div class="feature-card">
         <div class="step-num">I</div>
         <h3>Register on arrival</h3>
-        <p>Students enter their name, plate number, and estimated departure when they park. Takes under 30 seconds on a phone.</p>
+        <p>Students enter their name, plate number, and estimated departure when they park. Takes under 30 seconds on a
+          phone.</p>
       </div>
       <div class="feature-card">
         <div class="step-num">II</div>
         <h3>Find your blocker instantly</h3>
-        <p>Enter your plate and UniPark shows you exactly who is blocking you — with their name, plate, and a one-tap call button.</p>
+        <p>Enter your plate and UniPark shows you exactly who is blocking you — with their name, plate, and a one-tap
+          call button.</p>
       </div>
       <div class="feature-card">
         <div class="step-num">III</div>
         <h3>Security stays in control</h3>
-        <p>Admins get a live dashboard with every parked car, search filters, and the ability to mark any car as exited.</p>
+        <p>Admins get a live dashboard with every parked car, search filters, and the ability to mark any car as exited.
+        </p>
       </div>
     </div>
   </section>
@@ -599,4 +770,5 @@
   </footer>
 
 </body>
+
 </html>
