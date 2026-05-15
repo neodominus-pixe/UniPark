@@ -145,6 +145,91 @@
       font-weight: 600;
     }
 
+    /* ── AI Insights ── */
+    .insights-card {
+      width: 100%;
+      max-width: 960px;
+      margin-top: 2rem;
+      border: 1px solid var(--border);
+      padding: 2rem;
+      background: var(--surface);
+      animation: fadeUp 0.5s 0.24s ease both;
+      opacity: 0;
+    }
+
+    .insights-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .insights-title {
+      font-family: 'JelleeRegular', sans-serif;
+      font-size: 1rem;
+      font-weight: 400;
+      color: var(--text-on-light);
+      letter-spacing: 0.06em;
+      margin: 0;
+    }
+
+    .insights-sub {
+      font-family: 'JelleeRegular', sans-serif;
+      font-size: 0.6rem;
+      color: var(--muted);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      margin-top: 0.25rem;
+    }
+
+    .insights-body {
+      display: none;
+      margin-top: 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .insights-body.is-loading {
+      text-align: center;
+      color: var(--plum);
+      font-family: 'JelleeRegular', sans-serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding: 1.5rem 0;
+    }
+
+    .insights-body.is-error {
+      color: var(--danger);
+      font-family: 'JelleeRegular', sans-serif;
+      font-size: 0.78rem;
+      letter-spacing: 0.04em;
+      background: rgba(176, 58, 46, 0.06);
+      padding: 0.875rem 1.25rem;
+      border-left: 2px solid var(--danger);
+    }
+
+    .insight-item {
+      display: flex;
+      gap: 0.875rem;
+      margin-bottom: 0.875rem;
+      font-family: 'JelleeRegular', sans-serif;
+      font-size: 0.875rem;
+      color: var(--text-on-light);
+      line-height: 1.65;
+    }
+
+    .insight-item:last-child { margin-bottom: 0; }
+
+    .insight-dot {
+      width: 4px;
+      height: 4px;
+      background: var(--plum);
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 0.55rem;
+    }
+
     @media (max-width: 600px) {
       .admin-stats { flex-direction: column; }
       .admin-controls { flex-direction: column; }
@@ -214,6 +299,18 @@
           <tbody id="cars-tbody"></tbody>
         </table>
       </div>
+    </div>
+
+    <!-- AI Insights -->
+    <div class="insights-card">
+      <div class="insights-header">
+        <div>
+          <h3 class="insights-title">AI Insights</h3>
+          <p class="insights-sub">Occupancy pattern analysis</p>
+        </div>
+        <button class="btn btn-sm" id="insights-btn">Generate Insights</button>
+      </div>
+      <div id="insights-body" class="insights-body"></div>
     </div>
 
   </div>

@@ -116,7 +116,7 @@ Work through phases in order. Phases 3 and 4 depend on Phase 2 being live on Ver
 | Phase | Status |
 |-------|--------|
 | Phase 1 — localStorage Autofill | Complete |
-| Phase 2 — Vercel Serverless Function | Not started |
-| Phase 3 — Plate Photo AI Lookup | Not started |
-| Phase 4 — Admin Occupancy Insights | Not started |
+| Phase 2 — Vercel Serverless Function | Complete |
+| Phase 3 — Plate Photo AI Lookup | Complete |
+| Phase 4 — Admin Occupancy Insights | Complete |
 | Phase 5 — Voiceflow Embed | Not started |

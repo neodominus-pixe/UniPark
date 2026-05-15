@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('search-input').addEventListener('input', filterRows);
   document.getElementById('zone-filter').addEventListener('change', filterRows);
   document.getElementById('logout-btn').addEventListener('click', handleLogout);
+  document.getElementById('insights-btn').addEventListener('click', generateInsights);
 });
 
 async function checkAuth() {
@@ -204,6 +205,132 @@ async function handleLogout() {
   btn.textContent = 'Signing out…';
   await db.auth.signOut();
   window.location.href = 'login.html';
+}
+
+async function generateInsights() {
+  const btn  = document.getElementById('insights-btn');
+  const body = document.getElementById('insights-body');
+
+  btn.disabled    = true;
+  btn.textContent = 'Analysing…';
+  body.className  = 'insights-body is-loading';
+  body.style.display = 'block';
+  body.textContent   = 'Reading parking data…';
+
+  const { data, error } = await db
+    .from('parked_cars')
+    .select('zone_id, arrival_time, departure_time, status, zones(zone_name)');
+
+  if (error || !data?.length) {
+    body.className  = 'insights-body is-error';
+    body.textContent = 'Could not load parking data. Please try again.';
+    btn.disabled    = false;
+    btn.textContent = 'Generate Insights';
+    return;
+  }
+
+  const summary = buildDataSummary(data);
+
+  try {
+    const res = await fetch('/api/openai', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        prompt: `You are a parking coordinator analysing usage patterns for a university campus parking system (AUST). Based on the data below, write 3-4 brief, practical insights in plain English. Be specific with the numbers. Keep each insight to 1-2 sentences. Format as a plain list using "•" bullets, one per line.\n\n${summary}`
+      })
+    });
+
+    if (!res.ok) throw new Error();
+    const json = await res.json();
+
+    body.className   = 'insights-body';
+    body.textContent = '';
+    renderInsights(body, json.result || '');
+  } catch {
+    body.className  = 'insights-body is-error';
+    body.textContent = 'AI analysis failed. Please try again.';
+    btn.disabled    = false;
+    btn.textContent = 'Generate Insights';
+    return;
+  }
+
+  btn.disabled    = false;
+  btn.textContent = 'Regenerate';
+}
+
+function buildDataSummary(data) {
+  const active = data.filter(r => r.status === 'active').length;
+  const exited = data.filter(r => r.status === 'exited').length;
+
+  // Per-zone counts
+  const zoneCounts = {};
+  data.forEach(r => {
+    const z = r.zones?.zone_name || '?';
+    zoneCounts[z] = (zoneCounts[z] || 0) + 1;
+  });
+  const zoneStr = Object.entries(zoneCounts)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([z, c]) => `Zone ${z}: ${c} cars`)
+    .join(', ');
+
+  // Average parking duration for exited records
+  const durations = data
+    .filter(r => r.status === 'exited' && r.arrival_time && r.departure_time)
+    .map(r => (new Date(r.departure_time) - new Date(r.arrival_time)) / 60000);
+
+  let avgDurStr = 'insufficient data';
+  if (durations.length > 0) {
+    const avgMin = durations.reduce((s, d) => s + d, 0) / durations.length;
+    const h = Math.floor(avgMin / 60);
+    const m = Math.round(avgMin % 60);
+    avgDurStr = h > 0 ? `${h}h ${m}m` : `${m}m`;
+  }
+
+  // Peak arrival hour
+  const hourCounts = {};
+  data.forEach(r => {
+    if (!r.arrival_time) return;
+    const h = new Date(r.arrival_time).getHours();
+    hourCounts[h] = (hourCounts[h] || 0) + 1;
+  });
+
+  let peakStr = 'insufficient data';
+  const hourEntries = Object.entries(hourCounts);
+  if (hourEntries.length > 0) {
+    const [peakHour, peakCount] = hourEntries.sort((a, b) => b[1] - a[1])[0];
+    const h = parseInt(peakHour);
+    const label = h === 0 ? '12am' : h < 12 ? `${h}am` : h === 12 ? '12pm' : `${h - 12}pm`;
+    peakStr = `${label} (${peakCount} arrivals)`;
+  }
+
+  return [
+    `Total records: ${data.length} (${active} currently active, ${exited} exited)`,
+    `Zone breakdown: ${zoneStr}`,
+    `Average parking duration: ${avgDurStr}`,
+    `Peak arrival hour: ${peakStr}`
+  ].join('\n');
+}
+
+function renderInsights(container, text) {
+  const lines = text
+    .split('\n')
+    .map(l => l.replace(/^[•\-\*]\s*/, '').trim())
+    .filter(Boolean);
+
+  lines.forEach(line => {
+    const item = document.createElement('div');
+    item.className = 'insight-item';
+
+    const dot = document.createElement('div');
+    dot.className = 'insight-dot';
+
+    const span = document.createElement('span');
+    span.textContent = line;
+
+    item.appendChild(dot);
+    item.appendChild(span);
+    container.appendChild(item);
+  });
 }
 
 function formatDateTime(isoTime) {
