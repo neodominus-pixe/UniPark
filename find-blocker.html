@@ -25,6 +25,11 @@
         <p>Enter your plate number to see who is blocking you</p>
       </div>
 
+      <div class="mode-toggle">
+        <button type="button" class="mode-btn active" id="btn-type">Type Plate</button>
+        <button type="button" class="mode-btn" id="btn-scan">Scan Plate</button>
+      </div>
+
       <div id="form-message" class="form-message" role="alert"></div>
 
       <form id="lookup-form" novalidate>
@@ -40,6 +45,18 @@
         </div>
         <button type="submit" class="btn" id="lookup-btn">Check Now</button>
       </form>
+
+      <div id="scan-section" style="display:none;">
+        <div class="upload-area" id="upload-area">
+          <input type="file" id="plate-image" accept="image/*" />
+          <div class="upload-prompt" id="upload-prompt">
+            <span class="upload-icon">&#9632;</span>
+            <p>Tap to photograph or upload a plate image</p>
+          </div>
+          <img id="upload-preview" class="upload-preview" alt="Plate preview" />
+        </div>
+        <button type="button" class="btn" id="scan-btn">Scan &amp; Search</button>
+      </div>
     </div>
 
     <!-- Result area — rendered by JS -->

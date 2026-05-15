@@ -672,6 +672,103 @@ tbody tr:hover {
   font-weight: 400;
 }
 
+/* ── Mode toggle ── */
+.mode-toggle {
+  display: flex;
+  width: 100%;
+  margin-bottom: 1.5rem;
+  border: 1px solid var(--border);
+}
+
+.mode-btn {
+  flex: 1;
+  padding: 0.6rem 1rem;
+  background: transparent;
+  color: var(--muted-light);
+  font-family: 'JelleeRegular', sans-serif;
+  font-size: 0.62rem;
+  font-weight: 400;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  border: none;
+  border-right: 1px solid var(--border);
+  cursor: pointer;
+  transition: background 0.25s, color 0.25s;
+}
+
+.mode-btn:last-child {
+  border-right: none;
+}
+
+.mode-btn.active {
+  background: var(--plum);
+  color: #fff;
+}
+
+.mode-btn:not(.active):hover {
+  background: var(--gold-faint);
+  color: var(--text-on-dark);
+}
+
+/* ── Upload area ── */
+.upload-area {
+  position: relative;
+  border: 1px dashed var(--border-strong);
+  background: var(--input-bg);
+  cursor: pointer;
+  min-height: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  transition: background 0.25s, border-color 0.25s;
+}
+
+.upload-area:hover {
+  background: var(--gold-faint);
+  border-color: var(--plum);
+}
+
+.upload-area input[type="file"] {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+  font-size: 0;
+}
+
+.upload-prompt {
+  text-align: center;
+  padding: 2rem;
+  pointer-events: none;
+}
+
+.upload-icon {
+  display: block;
+  font-size: 1.5rem;
+  color: var(--plum);
+  opacity: 0.3;
+  margin-bottom: 0.75rem;
+}
+
+.upload-prompt p {
+  font-family: 'JelleeRegular', sans-serif;
+  font-size: 0.67rem;
+  color: var(--muted-light);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.upload-preview {
+  display: none;
+  width: 100%;
+  max-height: 240px;
+  object-fit: contain;
+  pointer-events: none;
+}
+
 /* ── Blocker card ── */
 .blocker-card {
   background: var(--surface);

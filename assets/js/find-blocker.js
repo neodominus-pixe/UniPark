@@ -4,7 +4,81 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   document.getElementById('lookup-form').addEventListener('submit', handleLookup);
+
+  document.getElementById('btn-type').addEventListener('click', () => setMode('type'));
+  document.getElementById('btn-scan').addEventListener('click', () => setMode('scan'));
+  document.getElementById('plate-image').addEventListener('change', handleImageSelect);
+  document.getElementById('scan-btn').addEventListener('click', handleScan);
 });
+
+function setMode(mode) {
+  const isType = mode === 'type';
+  document.getElementById('lookup-form').style.display    = isType ? '' : 'none';
+  document.getElementById('scan-section').style.display   = isType ? 'none' : '';
+  document.getElementById('btn-type').classList.toggle('active', isType);
+  document.getElementById('btn-scan').classList.toggle('active', !isType);
+  clearAll();
+}
+
+function handleImageSelect(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const preview = document.getElementById('upload-preview');
+  const prompt  = document.getElementById('upload-prompt');
+  preview.src           = URL.createObjectURL(file);
+  preview.style.display = 'block';
+  prompt.style.display  = 'none';
+}
+
+async function handleScan() {
+  clearAll();
+  const file = document.getElementById('plate-image').files[0];
+  if (!file) {
+    showMessage('Please select or photograph a plate image first.', 'error');
+    return;
+  }
+
+  const btn = document.getElementById('scan-btn');
+  btn.disabled    = true;
+  btn.textContent = 'Scanning…';
+
+  let imageBase64;
+  try {
+    imageBase64 = await resizeImage(file);
+  } catch {
+    showMessage('Could not read the image. Please try again.', 'error');
+    resetScanBtn(btn);
+    return;
+  }
+
+  const aiPrompt = 'You are a vehicle license plate reader. Look at this image and extract the license plate number. Return ONLY the plate number text in uppercase, preserving any spaces between letters and digits as they appear on the plate. If you cannot read a license plate, respond with exactly: UNREADABLE';
+
+  let plateText;
+  try {
+    const res = await fetch('/api/openai', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt: aiPrompt, imageBase64 })
+    });
+    if (!res.ok) throw new Error('API error');
+    const json = await res.json();
+    plateText = (json.result || '').trim().toUpperCase();
+  } catch {
+    showMessage('AI scan failed. Please try again or type the plate manually.', 'error');
+    resetScanBtn(btn);
+    return;
+  }
+
+  if (!plateText || plateText === 'UNREADABLE') {
+    showMessage('Could not read a plate from this image. Try a clearer photo or type the plate manually.', 'error');
+    resetScanBtn(btn);
+    return;
+  }
+
+  showMessage(`Plate detected: ${plateText} — searching…`, 'info');
+  await runLookup(plateText);
+  resetScanBtn(btn);
+}
 
 async function handleLookup(e) {
   e.preventDefault();
@@ -20,6 +94,13 @@ async function handleLookup(e) {
   btn.disabled    = true;
   btn.textContent = 'Searching…';
 
+  await runLookup(plate);
+
+  btn.disabled    = false;
+  btn.textContent = 'Check Now';
+}
+
+async function runLookup(plate) {
   // ── Step 1: find the student's own active record ────────────────
   const { data: myCar, error: myErr } = await db
     .from('parked_cars')
@@ -30,13 +111,11 @@ async function handleLookup(e) {
 
   if (myErr) {
     showMessage('Connection error. Please try again.', 'error');
-    resetBtn(btn);
     return;
   }
 
   if (!myCar) {
     showMessage(`No active registration found for plate "${plate}". Make sure you registered your car first.`, 'error');
-    resetBtn(btn);
     return;
   }
 
@@ -47,7 +126,6 @@ async function handleLookup(e) {
       zone:  myCar.zones.zone_name,
       spot:  myCar.spot_number
     });
-    resetBtn(btn);
     return;
   }
 
@@ -62,7 +140,6 @@ async function handleLookup(e) {
 
   if (blockerErr) {
     showMessage('Connection error. Please try again.', 'error');
-    resetBtn(btn);
     return;
   }
 
@@ -72,16 +149,11 @@ async function handleLookup(e) {
       zone:  myCar.zones.zone_name,
       spot:  myCar.spot_number
     });
-    resetBtn(btn);
     return;
   }
 
   // ── Step 4: blocker found ───────────────────────────────────────
-  showResult('blocked', {
-    myCar,
-    blocker
-  });
-  resetBtn(btn);
+  showResult('blocked', { myCar, blocker });
 }
 
 function showResult(state, data) {
@@ -102,9 +174,7 @@ function showResult(state, data) {
     msg.style.color     = '#374151';
     msg.style.marginTop = '0.5rem';
     msg.style.fontSize  = '0.95rem';
-
-    const zonePart  = document.createTextNode(`You are in Zone ${data.zone}, Spot 1 — the first spot. You can exit freely.`);
-    msg.appendChild(zonePart);
+    msg.appendChild(document.createTextNode(`You are in Zone ${data.zone}, Spot 1 — the first spot. You can exit freely.`));
 
     card.appendChild(label);
     card.appendChild(msg);
@@ -169,18 +239,12 @@ function showResult(state, data) {
     metaWrap.appendChild(metaSpot);
     metaWrap.appendChild(metaDep);
 
-    // tel: link — safe to use href here (not user-generated HTML)
     const callBtn = document.createElement('a');
     callBtn.className = 'call-btn';
     callBtn.href      = `tel:${blocker.phone_number}`;
-
-    const callIcon = document.createTextNode('📞 ');
-    const callText = document.createTextNode('Call ');
-    const callNum  = document.createTextNode(blocker.phone_number);
-
-    callBtn.appendChild(callIcon);
-    callBtn.appendChild(callText);
-    callBtn.appendChild(callNum);
+    callBtn.appendChild(document.createTextNode('📞 '));
+    callBtn.appendChild(document.createTextNode('Call '));
+    callBtn.appendChild(document.createTextNode(blocker.phone_number));
 
     card.appendChild(label);
     card.appendChild(blockerPlate);
@@ -190,6 +254,24 @@ function showResult(state, data) {
     card.appendChild(callBtn);
     area.appendChild(card);
   }
+}
+
+function resizeImage(file, maxDim = 1024) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      const scale  = Math.min(1, maxDim / Math.max(img.width, img.height));
+      const canvas = document.createElement('canvas');
+      canvas.width  = Math.round(img.width  * scale);
+      canvas.height = Math.round(img.height * scale);
+      canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+      resolve(canvas.toDataURL('image/jpeg', 0.85));
+    };
+    img.onerror = reject;
+    img.src = url;
+  });
 }
 
 function showMessage(text, type) {
@@ -206,9 +288,9 @@ function clearAll() {
   document.getElementById('result-area').innerHTML = '';
 }
 
-function resetBtn(btn) {
+function resetScanBtn(btn) {
   btn.disabled    = false;
-  btn.textContent = 'Check Now';
+  btn.textContent = 'Scan & Search';
 }
 
 function formatTime(isoTime) {
