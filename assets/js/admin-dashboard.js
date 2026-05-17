@@ -48,7 +48,7 @@ async function loadDashboard() {
   const totalSpots = zonesResult.data.reduce((sum, z) => sum + z.total_spots, 0);
 
   document.getElementById('stat-active').textContent = allCars.length;
-  document.getElementById('stat-exited').textContent = exitedResult.count ?? 0;
+  document.getElementById('stat-exited').textContent = exitedResult.error ? 0 : (exitedResult.count ?? 0);
   document.getElementById('stat-total').textContent  = totalSpots;
 
   // Populate zone filter from the actual data
@@ -76,9 +76,9 @@ function filterRows() {
 
   if (query) {
     filtered = filtered.filter(c =>
-      c.plate_number.toLowerCase().includes(query)  ||
-      c.student_id.toLowerCase().includes(query)    ||
-      c.student_name.toLowerCase().includes(query)
+      c.plate_number?.toLowerCase().includes(query)  ||
+      c.student_id?.toLowerCase().includes(query)    ||
+      c.student_name?.toLowerCase().includes(query)
     );
   }
 
@@ -287,10 +287,14 @@ async function generateInsights() {
 
   const summary = buildDataSummary(data);
 
+  const controller = new AbortController();
+  const timeout    = setTimeout(() => controller.abort(), 20000);
+
   try {
     const res = await fetch('/api/openai', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
+      signal: controller.signal,
       body: JSON.stringify({
         prompt: `You are a parking coordinator analysing usage patterns for a university campus parking system (AUST). Based on the data below, write 3-4 brief, practical insights in plain English. Be specific with the numbers. Keep each insight to 1-2 sentences. Format as a plain list using "•" bullets, one per line.\n\n${summary}`
       })
@@ -298,11 +302,13 @@ async function generateInsights() {
 
     if (!res.ok) throw new Error();
     const json = await res.json();
+    clearTimeout(timeout);
 
     body.className   = 'insights-body';
     body.textContent = '';
     renderInsights(body, json.result || '');
   } catch {
+    clearTimeout(timeout);
     body.className  = 'insights-body is-error';
     body.textContent = 'AI analysis failed. Please try again.';
     btn.disabled    = false;

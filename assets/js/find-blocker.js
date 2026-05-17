@@ -267,7 +267,7 @@ function showResult(state, data) {
 
     const callBtn = document.createElement('a');
     callBtn.className = 'call-btn';
-    callBtn.href      = `tel:${blocker.phone_number}`;
+    callBtn.href      = `tel:${blocker.phone_number.replace(/\s+/g, '')}`;
     callBtn.appendChild(document.createTextNode('📞 '));
     callBtn.appendChild(document.createTextNode('Call '));
     callBtn.appendChild(document.createTextNode(blocker.phone_number));
