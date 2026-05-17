@@ -1,3 +1,5 @@
+let selectedPlateFile = null;
+
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('plate_input').addEventListener('input', e => {
     e.target.value = e.target.value.toUpperCase();
@@ -7,9 +9,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.getElementById('btn-type').addEventListener('click', () => setMode('type'));
   document.getElementById('btn-scan').addEventListener('click', () => setMode('scan'));
-  document.getElementById('plate-image').addEventListener('change', handleImageSelect);
   document.getElementById('scan-btn').addEventListener('click', handleScan);
+
+  // Upload area opens the picker sheet
+  document.getElementById('upload-area').addEventListener('click', openPicker);
+
+  // Picker buttons
+  document.getElementById('picker-camera').addEventListener('click', () => {
+    closePicker();
+    document.getElementById('plate-image-camera').click();
+  });
+  document.getElementById('picker-gallery').addEventListener('click', () => {
+    closePicker();
+    document.getElementById('plate-image-gallery').click();
+  });
+  document.getElementById('picker-cancel').addEventListener('click', closePicker);
+  document.getElementById('img-picker-overlay').addEventListener('click', e => {
+    if (e.target === e.currentTarget) closePicker();
+  });
+
+  // Both inputs feed the same handler
+  document.getElementById('plate-image-camera').addEventListener('change', handleImageSelect);
+  document.getElementById('plate-image-gallery').addEventListener('change', handleImageSelect);
 });
+
+function openPicker()  { document.getElementById('img-picker-overlay').classList.add('is-open'); }
+function closePicker() { document.getElementById('img-picker-overlay').classList.remove('is-open'); }
 
 function setMode(mode) {
   const isType = mode === 'type';
@@ -23,6 +48,7 @@ function setMode(mode) {
 function handleImageSelect(e) {
   const file = e.target.files[0];
   if (!file) return;
+  selectedPlateFile = file;
   const preview = document.getElementById('upload-preview');
   const prompt  = document.getElementById('upload-prompt');
   preview.src           = URL.createObjectURL(file);
@@ -32,7 +58,7 @@ function handleImageSelect(e) {
 
 async function handleScan() {
   clearAll();
-  const file = document.getElementById('plate-image').files[0];
+  const file = selectedPlateFile;
   if (!file) {
     showMessage('Please select or photograph a plate image first.', 'error');
     return;
@@ -286,6 +312,7 @@ function clearAll() {
   msg.style.display = 'none';
   msg.textContent   = '';
   document.getElementById('result-area').innerHTML = '';
+  selectedPlateFile = null;
 }
 
 function resetScanBtn(btn) {

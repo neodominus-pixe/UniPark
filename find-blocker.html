@@ -7,6 +7,73 @@
   <link rel="stylesheet" media="screen" href="https://fontlibrary.org//face/jellee-typeface" type="text/css"/>
   <link rel="stylesheet" href="assets/css/style.css" />
   <script defer src="https://cdn.vercel-insights.com/v1/script.js"></script>
+  <style>
+    .img-picker-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 15, 30, 0.45);
+      z-index: 200;
+      align-items: flex-end;
+    }
+    .img-picker-overlay.is-open {
+      display: flex;
+    }
+    .img-picker-sheet {
+      width: 100%;
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      padding: 1.5rem 1.5rem 2.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .img-picker-title {
+      font-family: 'Raleway', sans-serif;
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.25rem;
+    }
+    .img-picker-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.875rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 0.9rem 1.25rem;
+      cursor: pointer;
+      color: var(--text-on-light);
+      font-family: 'Raleway', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      transition: background 0.2s, border-color 0.2s;
+      width: 100%;
+      text-align: left;
+    }
+    .img-picker-btn:hover { background: var(--surface-2); border-color: var(--border-strong); }
+    .img-picker-btn svg { flex-shrink: 0; color: var(--plum); }
+    .img-picker-cancel {
+      background: none;
+      border: none;
+      padding: 0.6rem;
+      cursor: pointer;
+      color: var(--muted);
+      font-family: 'Raleway', sans-serif;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      text-align: center;
+      width: 100%;
+      transition: color 0.2s;
+    }
+    .img-picker-cancel:hover { color: var(--text-on-light); }
+  </style>
 </head>
 <body>
   <div class="page">
@@ -48,7 +115,8 @@
 
       <div id="scan-section" style="display:none;">
         <div class="upload-area" id="upload-area">
-          <input type="file" id="plate-image" accept="image/*" />
+          <input type="file" id="plate-image-camera"  accept="image/*" capture="environment" style="display:none;" />
+          <input type="file" id="plate-image-gallery" accept="image/*" style="display:none;" />
           <div class="upload-prompt" id="upload-prompt">
             <span class="upload-icon">&#9632;</span>
             <p>Tap to photograph or upload a plate image</p>
@@ -59,9 +127,31 @@
       </div>
     </div>
 
-    <!-- Result area — rendered by JS -->
     <div id="result-area"></div>
 
+  </div>
+
+  <!-- Image source picker -->
+  <div class="img-picker-overlay" id="img-picker-overlay">
+    <div class="img-picker-sheet">
+      <div class="img-picker-title">Select image source</div>
+      <button class="img-picker-btn" id="picker-camera">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+          <circle cx="12" cy="13" r="4"></circle>
+        </svg>
+        Take a Photo
+      </button>
+      <button class="img-picker-btn" id="picker-gallery">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+          <circle cx="8.5" cy="8.5" r="1.5"></circle>
+          <polyline points="21 15 16 10 5 21"></polyline>
+        </svg>
+        Choose from Gallery
+      </button>
+      <button class="img-picker-cancel" id="picker-cancel">Cancel</button>
+    </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
