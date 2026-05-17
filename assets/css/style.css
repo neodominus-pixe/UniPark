@@ -363,6 +363,17 @@ body::after {
   border-color: var(--border-strong);
 }
 
+.btn-icon {
+  width: 2.1rem;
+  height: 2.1rem;
+  padding: 0;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
 .clear-info-wrap {
   text-align: center;
   margin-top: 0.75rem;
