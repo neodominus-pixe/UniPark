@@ -988,4 +988,27 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
   .cars-grid {
     grid-template-columns: 1fr;
   }
+
+  .topbar {
+    margin-bottom: 1.75rem;
+    padding-bottom: 0.875rem;
+  }
+
+  .topbar-links {
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .logo {
+    font-size: 1.2rem;
+  }
+
+  .topbar-links {
+    gap: 0.65rem;
+  }
+
+  .topbar-links a {
+    font-size: 0.6rem;
+  }
 }
