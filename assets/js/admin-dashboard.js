@@ -1,4 +1,5 @@
-let allCars = [];
+let allCars  = [];
+let allZones = [];
 
 document.addEventListener('DOMContentLoaded', async () => {
   await checkAuth();
@@ -41,7 +42,8 @@ async function loadDashboard() {
     return;
   }
 
-  allCars = carsResult.data;
+  allCars  = carsResult.data;
+  allZones = zonesResult.data;
 
   const totalSpots = zonesResult.data.reduce((sum, z) => sum + z.total_spots, 0);
 
@@ -63,6 +65,7 @@ async function loadDashboard() {
   tableWrapEl.style.display  = 'block';
 
   renderTable(allCars);
+  subscribeToChanges();
 }
 
 function filterRows() {
@@ -197,6 +200,59 @@ async function markExited(id, rowEl, btn) {
   if (document.getElementById('cars-tbody').children.length === 0) {
     renderTable([]);
   }
+}
+
+function subscribeToChanges() {
+  db.channel('admin-parked-cars')
+    .on('postgres_changes',
+      { event: 'INSERT', schema: 'public', table: 'parked_cars' },
+      (payload) => {
+        const car = payload.new;
+        if (car.status !== 'active') return;
+
+        const zone = allZones.find(z => z.id === car.zone_id);
+        car.zones = zone ? { zone_name: zone.zone_name } : null;
+
+        allCars.push(car);
+        addZoneToFilter(zone?.zone_name);
+
+        document.getElementById('stat-active').textContent =
+          parseInt(document.getElementById('stat-active').textContent) + 1;
+
+        filterRows();
+      }
+    )
+    .on('postgres_changes',
+      { event: 'UPDATE', schema: 'public', table: 'parked_cars' },
+      (payload) => {
+        const updated = payload.new;
+        if (updated.status !== 'exited') return;
+
+        const idx = allCars.findIndex(c => c.id === updated.id);
+        if (idx === -1) return;
+
+        allCars.splice(idx, 1);
+
+        document.getElementById('stat-active').textContent =
+          parseInt(document.getElementById('stat-active').textContent) - 1;
+        document.getElementById('stat-exited').textContent =
+          parseInt(document.getElementById('stat-exited').textContent) + 1;
+
+        filterRows();
+      }
+    )
+    .subscribe();
+}
+
+function addZoneToFilter(zoneName) {
+  if (!zoneName) return;
+  const zoneFilter = document.getElementById('zone-filter');
+  const exists = Array.from(zoneFilter.options).some(o => o.value === zoneName);
+  if (exists) return;
+  const opt = document.createElement('option');
+  opt.value       = zoneName;
+  opt.textContent = `Zone ${zoneName}`;
+  zoneFilter.appendChild(opt);
 }
 
 async function handleLogout() {
