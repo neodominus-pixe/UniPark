@@ -231,9 +231,23 @@
     }
 
     @media (max-width: 600px) {
+      .admin-page { padding: 1.5rem 1rem 3rem; }
       .admin-stats { flex-direction: column; }
       .admin-controls { flex-direction: column; }
       .admin-topbar { flex-direction: column; align-items: flex-start; gap: 1rem; }
+      .insights-card { padding: 1.25rem; }
+
+      /* Hide Student ID, Arrived, Est. Departure — keep Name, Phone, Plate, Zone, Spot, Action */
+      .table-wrap th:nth-child(2),
+      .table-wrap td:nth-child(2),
+      .table-wrap th:nth-child(7),
+      .table-wrap td:nth-child(7),
+      .table-wrap th:nth-child(8),
+      .table-wrap td:nth-child(8) {
+        display: none;
+      }
+
+      thead th, tbody td { padding: 0.6rem 0.75rem; }
     }
   </style>
 </head>
