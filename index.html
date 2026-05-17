@@ -59,6 +59,44 @@
       padding: 0;
     }
 
+    /* ── Nav right group (links + lock + hamburger) ── */
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .nav-end {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .nav-hamburger {
+      display: none;
+      background: none;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      width: 2.1rem;
+      height: 2.1rem;
+      border-radius: 50%;
+      align-items: center;
+      justify-content: center;
+      color: var(--plum);
+      padding: 0;
+      flex-shrink: 0;
+      transition: border-color 0.25s, color 0.25s;
+    }
+
+    .nav-hamburger:hover {
+      border-color: var(--border-strong);
+      color: var(--text-on-dark);
+    }
+
+    .nav-hamburger .icon-x { display: none; }
+    .landing-nav.is-open .nav-hamburger .icon-ham { display: none; }
+    .landing-nav.is-open .nav-hamburger .icon-x  { display: block; }
+
     /* ── Hero ── */
     .hero {
       min-height: 100vh;
@@ -616,7 +654,7 @@
     }
 
     /* ── Mobile ── */
-    @media (max-width: 500px) {
+    @media (max-width: 600px) {
 
       .hero-actions,
       .cta-actions {
@@ -628,8 +666,35 @@
         padding: 1rem 1.25rem;
       }
 
-      .landing-nav .nav-links {
+      .nav-hamburger {
+        display: flex;
+      }
+
+      .nav-links {
         display: none;
+        position: fixed;
+        top: 55px;
+        left: 0;
+        right: 0;
+        flex-direction: column;
+        align-items: stretch;
+        background: rgba(255, 255, 255, 0.97);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        border-bottom: 1px solid var(--border);
+        padding: 1rem 1.5rem 1.5rem;
+        gap: 0.75rem;
+        z-index: 99;
+      }
+
+      .landing-nav.is-open .nav-links {
+        display: flex;
+      }
+
+      .nav-links .btn {
+        text-align: center;
+        width: 100%;
+        box-sizing: border-box;
       }
     }
   </style>
@@ -638,18 +703,33 @@
 <body>
 
   <!-- Fixed Nav -->
-  <nav class="landing-nav">
+  <nav class="landing-nav" id="landing-nav">
     <a href="index.html" class="logo">Uni<span>Park</span></a>
-    <div class="nav-links">
-      <a href="dashboard.html">View Parking</a>
-      <a href="find-blocker.html">Find Blocker</a>
-      <a href="register.html" class="btn">Park My Car</a>
-      <a href="admin/login.html" class="btn btn-ghost btn-icon" aria-label="Security Login" title="Security Login">
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-        </svg>
-      </a>
+    <div class="nav-right">
+      <div class="nav-links" id="nav-links">
+        <a href="dashboard.html">View Parking</a>
+        <a href="find-blocker.html">Find Blocker</a>
+        <a href="register.html" class="btn">Park My Car</a>
+      </div>
+      <div class="nav-end">
+        <a href="admin/login.html" class="btn btn-ghost btn-icon" aria-label="Security Login" title="Security Login">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+        </a>
+        <button class="nav-hamburger" id="nav-hamburger" aria-label="Open menu" aria-expanded="false">
+          <svg class="icon-ham" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+          <svg class="icon-x" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
     </div>
   </nav>
 
@@ -782,6 +862,32 @@
     <a href="admin/login.html" class="footer-link">Security Login</a>
   </footer>
 
+  <script>
+    (function () {
+      const nav       = document.getElementById('landing-nav');
+      const hamburger = document.getElementById('nav-hamburger');
+      const navLinks  = document.getElementById('nav-links');
+
+      hamburger.addEventListener('click', function () {
+        const isOpen = nav.classList.toggle('is-open');
+        hamburger.setAttribute('aria-expanded', isOpen);
+      });
+
+      navLinks.querySelectorAll('a').forEach(function (link) {
+        link.addEventListener('click', function () {
+          nav.classList.remove('is-open');
+          hamburger.setAttribute('aria-expanded', 'false');
+        });
+      });
+
+      document.addEventListener('click', function (e) {
+        if (!nav.contains(e.target)) {
+          nav.classList.remove('is-open');
+          hamburger.setAttribute('aria-expanded', 'false');
+        }
+      });
+    })();
+  </script>
 </body>
 
 </html>
