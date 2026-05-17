@@ -697,6 +697,17 @@
         box-sizing: border-box;
       }
     }
+
+    /* ── Scroll reveal ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.65s ease, transform 0.65s ease;
+    }
+    .reveal.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
   </style>
 </head>
 
@@ -777,27 +788,27 @@
     <div class="section-rule">
       <div class="section-rule-diamond"></div>
     </div>
-    <div class="section-label">The Problem</div>
-    <h2>Campus parking is a daily headache</h2>
-    <p>Every morning, the same chaos — blocked cars, no way to reach owners, and security stretched thin.</p>
+    <div class="section-label" data-reveal>The Problem</div>
+    <h2 data-reveal>Campus parking is a daily headache</h2>
+    <p data-reveal>Every morning, the same chaos — blocked cars, no way to reach owners, and security stretched thin.</p>
 
     <div class="problem-grid">
-      <div class="problem-card">
+      <div class="problem-card" data-reveal data-reveal-delay="0s">
         <div class="p-num">01</div>
         <h3>Cars blocking each other</h3>
         <p>Students park in rows with no coordination, trapping cars for hours with no way out.</p>
       </div>
-      <div class="problem-card">
+      <div class="problem-card" data-reveal data-reveal-delay="0.1s">
         <div class="p-num">02</div>
         <h3>No way to contact the owner</h3>
         <p>There is no system to find out whose car is blocking you or how to reach them.</p>
       </div>
-      <div class="problem-card">
+      <div class="problem-card" data-reveal data-reveal-delay="0.2s">
         <div class="p-num">03</div>
         <h3>Security overloaded</h3>
         <p>Guards spend valuable time playing middleman between students instead of securing the campus.</p>
       </div>
-      <div class="problem-card">
+      <div class="problem-card" data-reveal data-reveal-delay="0.3s">
         <div class="p-num">04</div>
         <h3>Time wasted</h3>
         <p>Students miss classes waiting for a blocker who could have moved in seconds if contacted.</p>
@@ -812,25 +823,25 @@
     <div class="section-rule">
       <div class="section-rule-diamond"></div>
     </div>
-    <div class="section-label">The Solution</div>
-    <h2>Self-service parking in three steps</h2>
-    <p>UniPark gives every student a role in keeping the lot running smoothly — no hardware, no app install, just a
+    <div class="section-label" data-reveal>The Solution</div>
+    <h2 data-reveal>Self-service parking in three steps</h2>
+    <p data-reveal>UniPark gives every student a role in keeping the lot running smoothly — no hardware, no app install, just a
       browser.</p>
 
     <div class="feature-grid">
-      <div class="feature-card">
+      <div class="feature-card" data-reveal data-reveal-delay="0s">
         <div class="step-num">I</div>
         <h3>Register on arrival</h3>
         <p>Students enter their name, plate number, and estimated departure when they park. Takes under 30 seconds on a
           phone.</p>
       </div>
-      <div class="feature-card">
+      <div class="feature-card" data-reveal data-reveal-delay="0.1s">
         <div class="step-num">II</div>
         <h3>Find your blocker instantly</h3>
         <p>Enter your plate and UniPark shows you exactly who is blocking you — with their name, plate, and a one-tap
           call button.</p>
       </div>
-      <div class="feature-card">
+      <div class="feature-card" data-reveal data-reveal-delay="0.2s">
         <div class="step-num">III</div>
         <h3>Security stays in control</h3>
         <p>Admins get a live dashboard with every parked car, search filters, and the ability to mark any car as exited.
@@ -846,10 +857,10 @@
     <div class="section-rule">
       <div class="section-rule-diamond"></div>
     </div>
-    <div class="section-label">Get Started</div>
-    <h2>Ready to park?</h2>
-    <p>Register your car now and join AUST students keeping the lot organized.</p>
-    <div class="cta-actions">
+    <div class="section-label" data-reveal>Get Started</div>
+    <h2 data-reveal>Ready to park?</h2>
+    <p data-reveal>Register your car now and join AUST students keeping the lot organized.</p>
+    <div class="cta-actions" data-reveal>
       <a href="register.html" class="btn">Park My Car</a>
       <a href="dashboard.html" class="btn btn-ghost">View Parking</a>
     </div>
@@ -864,6 +875,7 @@
 
   <script>
     (function () {
+      // ── Hamburger menu ──
       const nav       = document.getElementById('landing-nav');
       const hamburger = document.getElementById('nav-hamburger');
       const navLinks  = document.getElementById('nav-links');
@@ -885,6 +897,27 @@
           nav.classList.remove('is-open');
           hamburger.setAttribute('aria-expanded', 'false');
         }
+      });
+
+      // ── Scroll reveal ──
+      document.querySelectorAll('[data-reveal]').forEach(function (el) {
+        el.classList.add('reveal');
+        if (el.dataset.revealDelay) {
+          el.style.transitionDelay = el.dataset.revealDelay;
+        }
+      });
+
+      var revealObserver = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            revealObserver.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.12 });
+
+      document.querySelectorAll('.reveal').forEach(function (el) {
+        revealObserver.observe(el);
       });
     })();
   </script>
