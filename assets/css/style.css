@@ -1015,6 +1015,140 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
   }
 }
 
+/* ── Phone country-code selector ── */
+.phone-input-wrap {
+  position: relative;
+  display: flex;
+}
+
+.phone-code-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0 0.75rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-right: none;
+  cursor: pointer;
+  font-family: 'JelleeRegular', sans-serif;
+  color: var(--text);
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.phone-code-btn:hover {
+  background: var(--surface-2);
+}
+
+.phone-code-btn.open {
+  border-color: var(--plum);
+  background: var(--gold-faint);
+}
+
+#phone-flag {
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+#phone-code-display {
+  color: var(--muted);
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+}
+
+.phone-chevron {
+  color: var(--muted);
+  transition: transform 0.2s;
+  flex-shrink: 0;
+}
+
+.phone-code-btn.open .phone-chevron {
+  transform: rotate(180deg);
+}
+
+.phone-input-wrap input[type="tel"] {
+  flex: 1;
+  min-width: 0;
+}
+
+.phone-dropdown {
+  position: absolute;
+  top: calc(100% + 2px);
+  left: 0;
+  z-index: 200;
+  width: 280px;
+  background: var(--bg);
+  border: 1px solid var(--border-strong);
+  box-shadow: 0 8px 24px rgba(36, 58, 94, 0.12);
+  display: none;
+  overflow: hidden;
+}
+
+.phone-dropdown.open {
+  display: block;
+}
+
+.phone-search {
+  width: 100%;
+  padding: 0.65rem 0.875rem;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  font-family: 'JelleeRegular', sans-serif;
+  font-size: 0.78rem;
+  color: var(--text);
+  outline: none;
+}
+
+.phone-search::placeholder {
+  color: var(--muted);
+  opacity: 0.7;
+}
+
+.phone-list {
+  list-style: none;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.phone-list li {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 0.875rem;
+  cursor: pointer;
+  font-family: 'JelleeRegular', sans-serif;
+  font-size: 0.76rem;
+  color: var(--text);
+  transition: background 0.15s;
+}
+
+.phone-list li:hover,
+.phone-list li.active {
+  background: var(--surface);
+}
+
+.phone-list li .pl-flag {
+  font-size: 1.1rem;
+  width: 1.4rem;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.phone-list li .pl-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.phone-list li .pl-code {
+  color: var(--muted);
+  font-size: 0.7rem;
+  flex-shrink: 0;
+}
+
 @media (max-width: 360px) {
   .logo {
     font-size: 1.2rem;
