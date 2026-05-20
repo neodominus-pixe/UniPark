@@ -58,7 +58,16 @@
           </div>
           <div class="form-group">
             <label for="plate_number">Plate Number</label>
-            <input type="text" id="plate_number" placeholder="e.g. ABC 1234" required autocomplete="off" />
+            <div class="phone-input-wrap">
+              <button type="button" class="phone-code-btn" id="plate-prefix-btn" aria-label="Select plate prefix">
+                <span id="plate-prefix-display">B</span>
+                <svg class="phone-chevron" xmlns="http://www.w3.org/2000/svg" width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 1l4 4 4-4"/></svg>
+              </button>
+              <div class="phone-dropdown" id="plate-prefix-dropdown">
+                <ul class="plate-prefix-list" id="plate-prefix-list" role="listbox"></ul>
+              </div>
+              <input type="text" id="plate_number" placeholder="12345" required autocomplete="off"/>
+            </div>
           </div>
         </div>
 

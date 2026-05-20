@@ -1149,6 +1149,49 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
   flex-shrink: 0;
 }
 
+/* ── Plate prefix selector ── */
+#plate-prefix-btn {
+  min-width: 3.25rem;
+  justify-content: center;
+}
+
+#plate-prefix-display {
+  font-size: 0.9rem;
+  letter-spacing: 0.1em;
+  color: var(--text);
+}
+
+#plate-prefix-dropdown {
+  width: 192px;
+}
+
+.plate-prefix-list {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  list-style: none;
+}
+
+.plate-prefix-list li {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.7rem;
+  cursor: pointer;
+  font-family: 'JelleeRegular', sans-serif;
+  font-size: 0.9rem;
+  letter-spacing: 0.1em;
+  color: var(--text);
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  transition: background 0.15s;
+}
+
+.plate-prefix-list li:hover,
+.plate-prefix-list li.active {
+  background: var(--surface);
+  color: var(--plum);
+}
+
 @media (max-width: 360px) {
   .logo {
     font-size: 1.2rem;

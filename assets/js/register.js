@@ -1,4 +1,7 @@
-let selectedDialCode = '+961';
+let selectedDialCode   = '+961';
+let selectedPlatePrefix = 'B';
+
+const PLATE_PREFIXES = ['B', 'G', 'O', 'S', 'N', 'M', 'P', 'D', 'J', 'R', 'T', 'Z'];
 
 const COUNTRIES = [
   { name: 'Lebanon',              flag: '🇱🇧', code: '+961' },
@@ -201,6 +204,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setMinDeparture();
   loadZones();
   initPhoneCodeSelector();
+  initPlatePrefixSelector();
   autofillFromStorage();
 
   document.getElementById('plate_number').addEventListener('input', e => {
@@ -314,6 +318,53 @@ function selectCountry(country) {
   document.getElementById('phone-code-display').textContent = country.code;
 }
 
+function initPlatePrefixSelector() {
+  const btn      = document.getElementById('plate-prefix-btn');
+  const dropdown = document.getElementById('plate-prefix-dropdown');
+  const list     = document.getElementById('plate-prefix-list');
+
+  renderPrefixList();
+
+  btn.addEventListener('click', e => {
+    e.stopPropagation();
+    dropdown.classList.contains('open') ? closePrefixDropdown() : openPrefixDropdown();
+  });
+
+  document.addEventListener('click', e => {
+    if (!btn.closest('.phone-input-wrap').contains(e.target)) closePrefixDropdown();
+  });
+
+  function openPrefixDropdown() {
+    dropdown.classList.add('open');
+    btn.classList.add('open');
+  }
+
+  function closePrefixDropdown() {
+    dropdown.classList.remove('open');
+    btn.classList.remove('open');
+  }
+
+  function renderPrefixList() {
+    list.innerHTML = '';
+    PLATE_PREFIXES.forEach(letter => {
+      const li = document.createElement('li');
+      li.setAttribute('role', 'option');
+      li.textContent = letter;
+      if (letter === selectedPlatePrefix) li.classList.add('active');
+      li.addEventListener('click', () => { selectPrefix(letter); closePrefixDropdown(); });
+      list.appendChild(li);
+    });
+  }
+}
+
+function selectPrefix(letter) {
+  selectedPlatePrefix = letter;
+  document.getElementById('plate-prefix-display').textContent = letter;
+  document.querySelectorAll('#plate-prefix-list li').forEach(li => {
+    li.classList.toggle('active', li.textContent === letter);
+  });
+}
+
 async function handleSubmit(e) {
   e.preventDefault();
   clearMessage();
@@ -326,14 +377,15 @@ async function handleSubmit(e) {
   const studentId     = document.getElementById('student_id').value.trim();
   const localNumber   = document.getElementById('phone_number').value.trim();
   const phoneNumber   = selectedDialCode + localNumber;
-  const plateNumber   = document.getElementById('plate_number').value.trim().toUpperCase();
+  const localPlate    = document.getElementById('plate_number').value.trim().toUpperCase();
+  const plateNumber   = selectedPlatePrefix + ' ' + localPlate;
   const zoneSelect    = document.getElementById('zone');
   const zoneId        = parseInt(zoneSelect.value);
   const spotNumber    = parseInt(document.getElementById('spot_number').value);
   const departureTime = document.getElementById('departure_time').value;
 
   // ── Client-side validation ──────────────────────────────────────
-  if (!studentName || !studentId || !localNumber || !plateNumber || !zoneId || !spotNumber || !departureTime) {
+  if (!studentName || !studentId || !localNumber || !localPlate || !zoneId || !spotNumber || !departureTime) {
     showMessage('Please fill in all fields.', 'error');
     resetBtn(btn);
     return;
@@ -403,11 +455,12 @@ async function handleSubmit(e) {
     return;
   }
 
-  localStorage.setItem('student_name',  studentName);
-  localStorage.setItem('student_id',    studentId);
-  localStorage.setItem('phone_code',    selectedDialCode);
-  localStorage.setItem('phone_number',  localNumber);
-  localStorage.setItem('plate_number',  plateNumber);
+  localStorage.setItem('student_name',   studentName);
+  localStorage.setItem('student_id',     studentId);
+  localStorage.setItem('phone_code',     selectedDialCode);
+  localStorage.setItem('phone_number',   localNumber);
+  localStorage.setItem('plate_prefix',   selectedPlatePrefix);
+  localStorage.setItem('plate_number',   localPlate);
 
   window.location.href = `dashboard.html?registered=${encodeURIComponent(plateNumber)}`;
 }
@@ -433,7 +486,9 @@ function resetBtn(btn) {
 
 function autofillFromStorage() {
   const fields = ['student_name', 'student_id', 'phone_number', 'plate_number'];
-  if (!fields.some(f => localStorage.getItem(f)) && !localStorage.getItem('phone_code')) return;
+  if (!fields.some(f => localStorage.getItem(f)) &&
+      !localStorage.getItem('phone_code') &&
+      !localStorage.getItem('plate_prefix')) return;
 
   fields.forEach(f => {
     const val = localStorage.getItem(f);
@@ -445,14 +500,20 @@ function autofillFromStorage() {
     const country = COUNTRIES.find(c => c.code === savedCode);
     if (country) selectCountry(country);
   }
+
+  const savedPrefix = localStorage.getItem('plate_prefix');
+  if (savedPrefix && PLATE_PREFIXES.includes(savedPrefix)) {
+    selectPrefix(savedPrefix);
+  }
 }
 
 function clearSavedInfo() {
-  ['student_name', 'student_id', 'phone_number', 'plate_number', 'phone_code'].forEach(f => {
+  ['student_name', 'student_id', 'phone_number', 'plate_number', 'phone_code', 'plate_prefix'].forEach(f => {
     localStorage.removeItem(f);
   });
   ['student_name', 'student_id', 'phone_number', 'plate_number'].forEach(f => {
     document.getElementById(f).value = '';
   });
-  selectCountry(COUNTRIES[0]); // reset to Lebanon
+  selectCountry(COUNTRIES[0]);
+  selectPrefix('B');
 }
