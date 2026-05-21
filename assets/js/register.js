@@ -224,60 +224,58 @@ function setMinDeparture() {
 }
 
 async function loadZones() {
-  const picker = document.getElementById('zone-picker');
+  const container = document.getElementById('lot-container');
 
-  const { data, error } = await db.from('zones').select('*').order('zone_name');
+  const [zonesRes, parkedRes] = await Promise.all([
+    db.from('zones').select('*').order('zone_name'),
+    db.from('parked_cars').select('zone_id, spot_number').eq('status', 'active')
+  ]);
 
-  if (error) {
-    showMessage('Failed to load zones. Please refresh the page.', 'error');
-    picker.innerHTML = '<p class="zone-loading">Error loading zones</p>';
+  if (zonesRes.error || parkedRes.error) {
+    showMessage('Failed to load parking lot. Please refresh.', 'error');
+    container.innerHTML = '<p class="lot-loading">Error loading parking lot</p>';
     return;
   }
 
-  picker.innerHTML = '';
-  data.forEach(zone => {
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = 'zone-card';
-    btn.dataset.zoneId = zone.id;
-    btn.dataset.totalSpots = zone.total_spots;
-    btn.innerHTML = `<span class="zone-letter">${zone.zone_name}</span><span class="zone-sub">Zone</span>`;
-    btn.addEventListener('click', () => selectZone(btn, zone));
-    picker.appendChild(btn);
+  window._zones = zonesRes.data;
+  const taken = new Set(parkedRes.data.map(r => `${r.zone_id}-${r.spot_number}`));
+
+  let html = '<div class="lot-grid">';
+  zonesRes.data.forEach(zone => {
+    html += `<div class="lot-zone">
+      <div class="lot-zone-header">
+        <div class="lot-zone-letter" id="lot-letter-${zone.id}">${zone.zone_name}</div>
+        <div class="lot-zone-meta">${zone.total_spots} spots</div>
+      </div>
+      <div class="lot-zone-spots">`;
+    for (let i = 1; i <= zone.total_spots; i++) {
+      const cls = taken.has(`${zone.id}-${i}`) ? 'occupied' : 'available';
+      html += `<div class="lot-spot ${cls}" data-zone-id="${zone.id}" data-zone-name="${zone.zone_name}" data-spot="${i}">
+        <span class="lot-spot-label">${zone.zone_name}${i}</span>
+        <svg class="lot-car" viewBox="0 0 40 80" aria-hidden="true"><use href="#lot-car-icon"/></svg>
+      </div>`;
+    }
+    html += `</div></div>`;
+  });
+  html += '</div>';
+
+  container.innerHTML = html;
+
+  container.querySelectorAll('.lot-spot.available').forEach(spot => {
+    spot.addEventListener('click', () => selectSpot(spot));
   });
 }
 
-function selectZone(btn, zone) {
-  document.querySelectorAll('.zone-card').forEach(c => c.classList.remove('active'));
-  btn.classList.add('active');
-  document.getElementById('zone').value = zone.id;
-  updateSpotMax(zone.total_spots);
-}
+function selectSpot(spotEl) {
+  document.querySelectorAll('.lot-spot.selected').forEach(s => {
+    s.classList.replace('selected', 'available');
+  });
+  document.querySelectorAll('.lot-zone-letter').forEach(l => l.classList.remove('active'));
 
-function updateSpotMax(totalSpots) {
-  document.getElementById('spot_number').value = '';
-  renderSpotGrid(parseInt(totalSpots));
-  document.getElementById('spot-group').style.display = '';
-}
-
-function renderSpotGrid(totalSpots) {
-  const grid = document.getElementById('spot-grid');
-  grid.innerHTML = '';
-  for (let i = 1; i <= totalSpots; i++) {
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = 'spot-btn';
-    btn.textContent = i;
-    btn.dataset.spot = i;
-    btn.addEventListener('click', () => selectSpot(btn, i));
-    grid.appendChild(btn);
-  }
-}
-
-function selectSpot(btn, number) {
-  document.querySelectorAll('.spot-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  document.getElementById('spot_number').value = number;
+  spotEl.classList.replace('available', 'selected');
+  document.getElementById('zone').value        = spotEl.dataset.zoneId;
+  document.getElementById('spot_number').value = spotEl.dataset.spot;
+  document.getElementById(`lot-letter-${spotEl.dataset.zoneId}`).classList.add('active');
 }
 
 function initPhoneCodeSelector() {
@@ -418,8 +416,8 @@ async function handleSubmit(e) {
     return;
   }
 
-  const activeCard = document.querySelector('.zone-card.active');
-  const maxSpots   = activeCard ? parseInt(activeCard.dataset.totalSpots) : 10;
+  const selectedZone = window._zones && window._zones.find(z => z.id == zoneId);
+  const maxSpots     = selectedZone ? selectedZone.total_spots : 10;
   if (spotNumber < 1 || spotNumber > maxSpots) {
     showMessage(`Spot number must be between 1 and ${maxSpots} for this zone.`, 'error');
     resetBtn(btn);
