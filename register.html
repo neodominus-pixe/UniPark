@@ -53,6 +53,29 @@
       font-family: 'JelleeRegular', sans-serif;
       grid-column: 1 / -1;
     }
+    .spot-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+    }
+    .spot-btn {
+      background: var(--surface);
+      border: none;
+      aspect-ratio: 1;
+      cursor: pointer;
+      font-family: 'JelleeRegular', sans-serif;
+      font-size: 1.05rem;
+      color: var(--plum);
+      transition: background 0.2s, color 0.2s;
+      outline: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .spot-btn:hover  { background: var(--surface-2); }
+    .spot-btn.active { background: var(--plum); color: #EDF4FA; }
   </style>
 </head>
 <body>
@@ -126,15 +149,15 @@
           <input type="hidden" id="zone" />
         </div>
 
-        <div class="form-row">
-          <div class="form-group">
-            <label for="spot_number">Spot Number</label>
-            <input type="number" id="spot_number" min="1" max="10" placeholder="1 – 10" required />
-          </div>
-          <div class="form-group">
-            <label for="departure_time">Estimated Departure</label>
-            <input type="datetime-local" id="departure_time" required />
-          </div>
+        <div class="form-group" id="spot-group" style="display:none;">
+          <label>Spot Number</label>
+          <div class="spot-grid" id="spot-grid"></div>
+          <input type="hidden" id="spot_number" />
+        </div>
+
+        <div class="form-group">
+          <label for="departure_time">Estimated Departure</label>
+          <input type="datetime-local" id="departure_time" required />
         </div>
 
         <button type="submit" class="btn" id="submit-btn">Register My Car</button>

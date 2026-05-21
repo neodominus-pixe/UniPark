@@ -255,11 +255,29 @@ function selectZone(btn, zone) {
 }
 
 function updateSpotMax(totalSpots) {
-  const spotInput = document.getElementById('spot_number');
-  const max = parseInt(totalSpots);
-  spotInput.max         = max;
-  spotInput.placeholder = `1 – ${max}`;
-  spotInput.value       = '';
+  document.getElementById('spot_number').value = '';
+  renderSpotGrid(parseInt(totalSpots));
+  document.getElementById('spot-group').style.display = '';
+}
+
+function renderSpotGrid(totalSpots) {
+  const grid = document.getElementById('spot-grid');
+  grid.innerHTML = '';
+  for (let i = 1; i <= totalSpots; i++) {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'spot-btn';
+    btn.textContent = i;
+    btn.dataset.spot = i;
+    btn.addEventListener('click', () => selectSpot(btn, i));
+    grid.appendChild(btn);
+  }
+}
+
+function selectSpot(btn, number) {
+  document.querySelectorAll('.spot-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('spot_number').value = number;
 }
 
 function initPhoneCodeSelector() {
