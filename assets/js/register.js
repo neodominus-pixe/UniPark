@@ -211,7 +211,6 @@ document.addEventListener('DOMContentLoaded', () => {
     e.target.value = e.target.value.toUpperCase();
   });
 
-  document.getElementById('zone').addEventListener('change', updateSpotMax);
   document.getElementById('register-form').addEventListener('submit', handleSubmit);
 });
 
@@ -225,37 +224,42 @@ function setMinDeparture() {
 }
 
 async function loadZones() {
-  const zoneSelect = document.getElementById('zone');
+  const picker = document.getElementById('zone-picker');
 
   const { data, error } = await db.from('zones').select('*').order('zone_name');
 
   if (error) {
     showMessage('Failed to load zones. Please refresh the page.', 'error');
-    zoneSelect.innerHTML = '<option value="">Error loading zones</option>';
+    picker.innerHTML = '<p class="zone-loading">Error loading zones</p>';
     return;
   }
 
-  zoneSelect.innerHTML = '<option value="">Select a zone...</option>';
+  picker.innerHTML = '';
   data.forEach(zone => {
-    const opt = document.createElement('option');
-    opt.value = zone.id;
-    opt.textContent = `Zone ${zone.zone_name}`;
-    opt.dataset.totalSpots = zone.total_spots;
-    zoneSelect.appendChild(opt);
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'zone-card';
+    btn.dataset.zoneId = zone.id;
+    btn.dataset.totalSpots = zone.total_spots;
+    btn.innerHTML = `<span class="zone-letter">${zone.zone_name}</span><span class="zone-sub">Zone</span>`;
+    btn.addEventListener('click', () => selectZone(btn, zone));
+    picker.appendChild(btn);
   });
 }
 
-function updateSpotMax() {
-  const zoneSelect = document.getElementById('zone');
-  const spotInput  = document.getElementById('spot_number');
-  const selected   = zoneSelect.options[zoneSelect.selectedIndex];
+function selectZone(btn, zone) {
+  document.querySelectorAll('.zone-card').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('zone').value = zone.id;
+  updateSpotMax(zone.total_spots);
+}
 
-  if (selected && selected.dataset.totalSpots) {
-    const max = parseInt(selected.dataset.totalSpots);
-    spotInput.max         = max;
-    spotInput.placeholder = `1 – ${max}`;
-    spotInput.value       = '';
-  }
+function updateSpotMax(totalSpots) {
+  const spotInput = document.getElementById('spot_number');
+  const max = parseInt(totalSpots);
+  spotInput.max         = max;
+  spotInput.placeholder = `1 – ${max}`;
+  spotInput.value       = '';
 }
 
 function initPhoneCodeSelector() {
@@ -379,8 +383,7 @@ async function handleSubmit(e) {
   const phoneNumber   = selectedDialCode + localNumber;
   const localPlate    = document.getElementById('plate_number').value.trim().toUpperCase();
   const plateNumber   = selectedPlatePrefix + ' ' + localPlate;
-  const zoneSelect    = document.getElementById('zone');
-  const zoneId        = parseInt(zoneSelect.value);
+  const zoneId        = parseInt(document.getElementById('zone').value);
   const spotNumber    = parseInt(document.getElementById('spot_number').value);
   const departureTime = document.getElementById('departure_time').value;
 
@@ -397,7 +400,8 @@ async function handleSubmit(e) {
     return;
   }
 
-  const maxSpots = parseInt(zoneSelect.options[zoneSelect.selectedIndex].dataset.totalSpots);
+  const activeCard = document.querySelector('.zone-card.active');
+  const maxSpots   = activeCard ? parseInt(activeCard.dataset.totalSpots) : 10;
   if (spotNumber < 1 || spotNumber > maxSpots) {
     showMessage(`Spot number must be between 1 and ${maxSpots} for this zone.`, 'error');
     resetBtn(btn);
