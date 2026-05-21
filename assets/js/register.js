@@ -261,9 +261,45 @@ async function loadZones() {
 
   container.innerHTML = html;
 
-  container.querySelectorAll('.lot-spot.available').forEach(spot => {
-    spot.addEventListener('click', () => selectSpot(spot));
+  container.addEventListener('click', e => {
+    const spot = e.target.closest('.lot-spot');
+    if (spot && spot.classList.contains('available')) selectSpot(spot);
   });
+
+  setupRealtime();
+}
+
+function setupRealtime() {
+  db.channel('lot-updates')
+    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'parked_cars' }, payload => {
+      if (payload.new.status === 'active') handleSpotTaken(payload.new);
+    })
+    .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'parked_cars' }, payload => {
+      if (payload.new.status === 'exited') handleSpotFreed(payload.new);
+    })
+    .subscribe();
+}
+
+function handleSpotTaken(row) {
+  const spot = document.querySelector(`.lot-spot[data-zone-id="${row.zone_id}"][data-spot="${row.spot_number}"]`);
+  if (!spot || spot.classList.contains('occupied')) return;
+
+  if (spot.classList.contains('selected')) {
+    document.getElementById('zone').value        = '';
+    document.getElementById('spot_number').value = '';
+    const letter = document.getElementById(`lot-letter-${row.zone_id}`);
+    if (letter) letter.classList.remove('active');
+    showMessage('The spot you selected was just taken. Please choose another.', 'error');
+  }
+
+  spot.classList.remove('available', 'selected');
+  spot.classList.add('occupied');
+}
+
+function handleSpotFreed(row) {
+  const spot = document.querySelector(`.lot-spot[data-zone-id="${row.zone_id}"][data-spot="${row.spot_number}"]`);
+  if (!spot || !spot.classList.contains('occupied')) return;
+  spot.classList.replace('occupied', 'available');
 }
 
 function selectSpot(spotEl) {
