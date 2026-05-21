@@ -248,10 +248,142 @@
       }
 
       thead th, tbody td { padding: 0.6rem 0.75rem; }
+      .lot-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    /* ── View toggle ── */
+    .view-toggle {
+      display: flex;
+      width: 100%;
+      max-width: 960px;
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      margin-bottom: 1.5rem;
+      animation: fadeUp 0.5s 0.15s ease both;
+      opacity: 0;
+    }
+    .view-btn {
+      flex: 1;
+      background: var(--surface);
+      border: none;
+      padding: 0.65rem 1rem;
+      font-family: 'JelleeRegular', sans-serif;
+      font-size: 0.68rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+      outline: none;
+    }
+    .view-btn:hover { background: var(--surface-2); color: var(--plum); }
+    .view-btn.active { background: var(--plum); color: #EDF4FA; }
+
+    /* ── Lot map ── */
+    .lot-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+    }
+    .lot-zone { background: var(--bg); padding: 0.75rem 0.6rem; }
+    .lot-zone-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+    }
+    .lot-zone-letter {
+      font-family: 'JelleeRegular', sans-serif;
+      font-size: 0.95rem;
+      width: 28px; height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--surface);
+      color: var(--plum);
+      border: 1px solid var(--border);
+    }
+    .lot-zone-meta {
+      font-size: 0.58rem;
+      color: var(--muted);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-family: 'JelleeRegular', sans-serif;
+    }
+    .lot-zone-spots { display: flex; flex-direction: column; gap: 3px; }
+    .lot-spot {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 6px;
+      min-height: 34px;
+    }
+    .lot-spot.available {
+      border: 1px dashed rgba(36,58,94,0.25);
+    }
+    .lot-spot.occupied {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .lot-spot.occupied:hover { background: var(--surface); border-color: var(--border-strong); }
+    .lot-spot.occupied.selected { background: var(--plum); border-color: var(--plum); }
+    .lot-spot-label {
+      font-size: 0.58rem;
+      color: var(--muted);
+      min-width: 22px;
+      font-family: 'JelleeRegular', sans-serif;
+      letter-spacing: 0.04em;
+    }
+    .lot-spot.occupied.selected .lot-spot-label { color: rgba(237,244,250,0.65); }
+    .lot-car { flex: 1; height: 20px; display: none; }
+    .lot-spot.occupied .lot-car { display: block; fill: var(--plum); opacity: 0.7; }
+    .lot-spot.occupied.selected .lot-car { fill: rgba(237,244,250,0.9); opacity: 1; }
+
+    /* ── Lot detail panel ── */
+    .lot-detail-panel {
+      margin-top: 1px;
+      padding: 1rem 1.25rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-top: none;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .lot-detail-name {
+      font-family: 'JelleeRegular', sans-serif;
+      font-size: 0.95rem;
+      color: var(--text-on-light);
+      margin-bottom: 0.2rem;
+    }
+    .lot-detail-meta {
+      font-size: 0.68rem;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+      font-family: 'JelleeRegular', sans-serif;
+      margin-bottom: 0.25rem;
     }
   </style>
 </head>
 <body>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <symbol id="admin-car-icon" viewBox="0 0 40 80">
+        <rect x="6" y="4" width="28" height="72" rx="6" ry="6"/>
+        <rect x="10" y="14" width="20" height="14" rx="2" fill="rgba(255,255,255,0.4)"/>
+        <rect x="10" y="52" width="20" height="14" rx="2" fill="rgba(255,255,255,0.4)"/>
+        <rect x="10" y="34" width="20" height="12" fill="rgba(255,255,255,0.15)"/>
+      </symbol>
+    </defs>
+  </svg>
+
   <div class="admin-page">
 
     <!-- Topbar -->
@@ -291,8 +423,14 @@
       </select>
     </div>
 
+    <!-- View Toggle -->
+    <div class="view-toggle">
+      <button class="view-btn active" id="btn-table-view">Table View</button>
+      <button class="view-btn" id="btn-map-view">Map View</button>
+    </div>
+
     <!-- Table -->
-    <div class="table-container">
+    <div class="table-container" id="table-view">
       <div id="loading" class="loading">Loading parking data…</div>
 
       <div class="table-wrap" id="table-wrap" style="display:none;">
@@ -313,6 +451,12 @@
           <tbody id="cars-tbody"></tbody>
         </table>
       </div>
+    </div>
+
+    <!-- Map View -->
+    <div id="lot-view" style="display:none; width:100%; max-width:960px;">
+      <div id="admin-lot-grid" class="lot-grid"></div>
+      <div id="lot-detail-panel" class="lot-detail-panel" style="display:none;"></div>
     </div>
 
     <!-- AI Insights -->

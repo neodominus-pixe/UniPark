@@ -66,6 +66,8 @@ async function loadDashboard() {
 
   renderTable(allCars);
   subscribeToChanges();
+  initLotView();
+  initViewToggle();
 }
 
 function filterRows() {
@@ -189,6 +191,7 @@ async function markExited(id, rowEl, btn) {
   // Remove from local data and DOM
   allCars = allCars.filter(c => c.id !== id);
   rowEl.remove();
+  renderLotView();
 
   // Update stats live
   const activeEl = document.getElementById('stat-active');
@@ -220,6 +223,7 @@ function subscribeToChanges() {
           parseInt(document.getElementById('stat-active').textContent) + 1;
 
         filterRows();
+        renderLotView();
       }
     )
     .on('postgres_changes',
@@ -239,6 +243,7 @@ function subscribeToChanges() {
           parseInt(document.getElementById('stat-exited').textContent) + 1;
 
         filterRows();
+        renderLotView();
       }
     )
     .subscribe();
@@ -401,4 +406,124 @@ function formatDateTime(isoTime) {
   return d.toLocaleDateString([], { month: 'short', day: 'numeric' })
     + ' '
     + d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}
+
+function initViewToggle() {
+  const btnTable  = document.getElementById('btn-table-view');
+  const btnMap    = document.getElementById('btn-map-view');
+  const tableView = document.getElementById('table-view');
+  const lotView   = document.getElementById('lot-view');
+
+  btnTable.addEventListener('click', () => {
+    btnTable.classList.add('active');
+    btnMap.classList.remove('active');
+    tableView.style.display = '';
+    lotView.style.display   = 'none';
+    clearSpotDetail();
+  });
+
+  btnMap.addEventListener('click', () => {
+    btnMap.classList.add('active');
+    btnTable.classList.remove('active');
+    tableView.style.display = 'none';
+    lotView.style.display   = '';
+  });
+}
+
+function initLotView() {
+  const grid = document.getElementById('admin-lot-grid');
+  grid.addEventListener('click', e => {
+    const spot = e.target.closest('.lot-spot.occupied');
+    if (!spot) { clearSpotDetail(); return; }
+    showSpotDetail(spot);
+  });
+  renderLotView();
+}
+
+function renderLotView() {
+  const grid = document.getElementById('admin-lot-grid');
+  if (!grid) return;
+
+  const taken = new Map();
+  allCars.forEach(car => taken.set(`${car.zone_id}-${car.spot_number}`, car));
+
+  let html = '';
+  allZones.forEach(zone => {
+    html += `<div class="lot-zone">
+      <div class="lot-zone-header">
+        <div class="lot-zone-letter">${zone.zone_name}</div>
+        <div class="lot-zone-meta">${zone.total_spots} spots</div>
+      </div>
+      <div class="lot-zone-spots">`;
+    for (let i = 1; i <= zone.total_spots; i++) {
+      const car    = taken.get(`${zone.id}-${i}`);
+      const cls    = car ? 'occupied' : 'available';
+      const carAttr = car ? `data-car-id="${car.id}"` : '';
+      html += `<div class="lot-spot ${cls}" data-zone-id="${zone.id}" data-spot="${i}" ${carAttr}>
+        <span class="lot-spot-label">${zone.zone_name}${i}</span>
+        <svg class="lot-car" viewBox="0 0 40 80" aria-hidden="true"><use href="#admin-car-icon"/></svg>
+      </div>`;
+    }
+    html += `</div></div>`;
+  });
+
+  grid.innerHTML = html;
+  clearSpotDetail();
+}
+
+function showSpotDetail(spot) {
+  document.querySelectorAll('#admin-lot-grid .lot-spot.selected').forEach(s => s.classList.remove('selected'));
+  spot.classList.add('selected');
+
+  const carId = parseInt(spot.dataset.carId);
+  const car   = allCars.find(c => c.id === carId);
+  if (!car) return;
+
+  const panel = document.getElementById('lot-detail-panel');
+  panel.style.display = '';
+  panel.innerHTML = `
+    <div>
+      <div class="lot-detail-name">${car.student_name}</div>
+      <div class="lot-detail-meta">${car.plate_number} &nbsp;·&nbsp; Zone ${car.zones?.zone_name ?? '?'}, Spot ${car.spot_number}</div>
+      <a href="tel:${car.phone_number}" class="phone-link">${car.phone_number}</a>
+    </div>
+    <button class="btn btn-sm btn-danger" id="lot-exit-btn">Mark Exited</button>
+  `;
+
+  document.getElementById('lot-exit-btn').addEventListener('click', () => markExitedFromMap(car.id));
+}
+
+function clearSpotDetail() {
+  document.querySelectorAll('#admin-lot-grid .lot-spot.selected').forEach(s => s.classList.remove('selected'));
+  const panel = document.getElementById('lot-detail-panel');
+  if (panel) panel.style.display = 'none';
+}
+
+async function markExitedFromMap(carId) {
+  const btn = document.getElementById('lot-exit-btn');
+  btn.disabled    = true;
+  btn.textContent = 'Updating…';
+
+  const { error } = await db.from('parked_cars').update({ status: 'exited' }).eq('id', carId);
+
+  if (error) {
+    btn.disabled    = false;
+    btn.textContent = 'Mark Exited';
+    alert('Failed to update. Please try again.');
+    return;
+  }
+
+  allCars = allCars.filter(c => c.id !== carId);
+
+  const activeEl = document.getElementById('stat-active');
+  const exitedEl = document.getElementById('stat-exited');
+  activeEl.textContent = parseInt(activeEl.textContent) - 1;
+  exitedEl.textContent = parseInt(exitedEl.textContent) + 1;
+
+  renderLotView();
+
+  const row = document.querySelector(`tr[data-id="${carId}"]`);
+  if (row) row.remove();
+  if (document.getElementById('cars-tbody').children.length === 0) renderTable([]);
+  filterRows();
 }
