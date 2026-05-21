@@ -119,4 +119,4 @@ Work through phases in order. Phases 3 and 4 depend on Phase 2 being live on Ver
 | Phase 2 — Vercel Serverless Function | Complete |
 | Phase 3 — Plate Photo AI Lookup | Complete |
 | Phase 4 — Admin Occupancy Insights | Complete |
-| Phase 5 — Voiceflow Embed | Not started |
+| Phase 5 — Voiceflow Embed | Complete |
