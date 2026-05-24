@@ -110,7 +110,7 @@
       overflow: hidden;
     }
 
-    /* Ghost zone letters background */
+    /* Ghost icon background */
     .hero-bg-grid {
       position: absolute;
       inset: 0;
@@ -122,43 +122,23 @@
       z-index: 0;
     }
 
-    .hero-bg-grid span {
-      font-family: 'JelleeRegular', sans-serif;
-      font-weight: 400;
-      font-size: clamp(12rem, 22vw, 20rem);
-      color: var(--plum);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      line-height: 1;
-      opacity: 0.06;
+    .hero-bg-grid img {
+      width: clamp(10rem, 18vw, 16rem);
+      height: auto;
+      display: block;
+      opacity: 0.7;
+      filter: sepia(1) hue-rotate(195deg) saturate(6) brightness(0.4);
+      mix-blend-mode: multiply;
       user-select: none;
+      align-self: center;
+      justify-self: center;
       animation: heroLetterIn 1.2s ease both;
     }
 
-    .hero-bg-grid span:nth-child(1) {
-      animation-delay: 0.05s;
-    }
-
-    .hero-bg-grid span:nth-child(2) {
-      animation-delay: 0.1s;
-    }
-
-    .hero-bg-grid span:nth-child(3) {
-      animation-delay: 0.15s;
-    }
-
-    .hero-bg-grid span:nth-child(4) {
-      animation-delay: 0.2s;
-    }
-
-    .hero-bg-grid span:nth-child(5) {
-      animation-delay: 0.25s;
-    }
-
-    .hero-bg-grid span:nth-child(6) {
-      animation-delay: 0.3s;
-    }
+    .hero-bg-grid img:nth-child(1) { grid-column: 1; grid-row: 1; animation-delay: 0.05s; }
+    .hero-bg-grid img:nth-child(2) { grid-column: 3; grid-row: 1; animation-delay: 0.15s; }
+    .hero-bg-grid img:nth-child(3) { grid-column: 1; grid-row: 2; animation-delay: 0.2s; }
+    .hero-bg-grid img:nth-child(4) { grid-column: 3; grid-row: 2; animation-delay: 0.3s; }
 
     @keyframes heroLetterIn {
       from {
@@ -167,7 +147,7 @@
       }
 
       to {
-        opacity: 0.06;
+        opacity: 0.7;
         transform: scale(1);
       }
     }
@@ -561,6 +541,24 @@
       border-bottom: 1px solid var(--border);
     }
 
+    .cta-map-bg {
+      display: block;
+      width: 100%;
+      max-width: 560px;
+      height: auto;
+      margin: 0 auto 2.5rem;
+      border: 1px solid var(--border);
+    }
+
+    .cta-content {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+    }
+
     .cta-section h2 {
       color: var(--text-on-dark);
     }
@@ -747,8 +745,10 @@
   <!-- Hero -->
   <section class="hero">
     <div class="hero-bg-grid" aria-hidden="true">
-      <span>A</span><span>B</span><span>C</span>
-      <span>D</span><span>E</span><span>F</span>
+      <img src="assets/img/hero-car.png" alt="">
+      <img src="assets/img/hero-pin.png" alt="">
+      <img src="assets/img/hero-pin.png" alt="">
+      <img src="assets/img/hero-car.png" alt="">
     </div>
 
     <div class="hero-inner">
@@ -854,15 +854,18 @@
 
   <!-- CTA -->
   <section class="section cta-section">
-    <div class="section-rule">
-      <div class="section-rule-diamond"></div>
-    </div>
-    <div class="section-label" data-reveal>Get Started</div>
-    <h2 data-reveal>Ready to park?</h2>
-    <p data-reveal>Register your car now and join AUST students keeping the lot organized.</p>
-    <div class="cta-actions" data-reveal>
-      <a href="register.html" class="btn">Park My Car</a>
-      <a href="dashboard.html" class="btn btn-ghost">View Parking</a>
+    <div class="cta-content">
+      <div class="section-rule">
+        <div class="section-rule-diamond"></div>
+      </div>
+      <div class="section-label" data-reveal>Get Started</div>
+      <h2 data-reveal>Ready to park?</h2>
+      <p data-reveal>Register your car now and join AUST students keeping the lot organized.</p>
+      <img src="assets/img/campus-map.png" class="cta-map-bg" alt="AUST campus parking map" data-reveal>
+      <div class="cta-actions" data-reveal>
+        <a href="register.html" class="btn">Park My Car</a>
+        <a href="dashboard.html" class="btn btn-ghost">View Parking</a>
+      </div>
     </div>
   </section>
 
