@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+
+  <rect width="256" height="256" rx="44" fill="#243A5E"/>
+
+  <rect x="1" y="1" width="254" height="254" rx="43" fill="none"
+        stroke="rgba(95,134,166,0.5)" stroke-width="1.5"/>
+
+  <path fill-rule="evenodd" fill="#EDF4FA" d="
+    M 70,44 H 148 Q 188,44 188,97 Q 188,150 148,150 H 94 V 212 H 70 Z
+    M 94,69  H 144 Q 164,69  164,97 Q 164,125 144,125 H 94 Z
+  "/>
+
+  <rect x="158" y="190" width="10" height="10"
+        transform="rotate(45 163 195)"
+        fill="#8FB6D8" opacity="0.9"/>
+
+</svg>
