@@ -13,8 +13,8 @@ All parking data lives in a Supabase (PostgreSQL) database.
 
 **Required headers on every API call:**
 ```
-apikey: <get from unipark/assets/js/config.js>
-Authorization: Bearer <same value as apikey>
+apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVmb3d2cW91bHluY2psa3VqY3JuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcyOTU4NzAsImV4cCI6MjA5Mjg3MTg3MH0._OLKo1BiyAgeJxgS5q32Mu3qu-9FaZIHbz9HFfC7_GM
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVmb3d2cW91bHluY2psa3VqY3JuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcyOTU4NzAsImV4cCI6MjA5Mjg3MTg3MH0._OLKo1BiyAgeJxgS5q32Mu3qu-9FaZIHbz9HFfC7_GM
 Content-Type: application/json
 ```
 
@@ -241,4 +241,12 @@ Voiceflow will provide a JavaScript snippet like:
   (function(d, t) { ... })(document, 'script');
 </script>
 ```
-This snippet gets added to all UniPark HTML pages just before the closing `</body>` tag. The chatbot will appear as a floating button in the bottom-right corner of every page.
+This snippet gets added to the **4 student-facing pages** only, just before the closing `</body>` tag:
+- `index.html`
+- `register.html`
+- `dashboard.html`
+- `find-blocker.html`
+
+Do **not** add it to admin pages (`admin/login.html`, `admin/dashboard.html`, `admin/reset-password.html`) — those are for security staff only.
+
+The chatbot will appear as a floating button in the bottom-right corner of every student page.
