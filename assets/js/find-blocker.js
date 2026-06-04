@@ -57,8 +57,8 @@ function handleImageSelect(e) {
 }
 
 async function handleScan() {
-  clearAll();
   const file = selectedPlateFile;
+  clearAll();
   if (!file) {
     showMessage('Please select or photograph a plate image first.', 'error');
     return;
